@@ -1,0 +1,40 @@
+{
+  "name": "takvim-planlayici",
+  "version": "1.0.0",
+  "description": "Türkçe takvim ve etkinlik planlayıcı uygulaması",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint \"src/**/*.{ts,tsx}\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hikmetgulsesli/takvim-planlayici.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hikmetgulsesli/takvim-planlayici/issues"
+  },
+  "homepage": "https://github.com/hikmetgulsesli/takvim-planlayici#readme",
+  "dependencies": {
+    "@tailwindcss/vite": "^4.2.2",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "tailwindcss": "^4.2.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.1",
+    "eslint": "^10.1.0",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "typescript": "^6.0.2",
+    "typescript-eslint": "^8.58.0",
+    "vite": "^8.0.3"
+  }
+}

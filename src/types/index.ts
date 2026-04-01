@@ -1,57 +1,48 @@
-export type ReminderType = 'none' | '5min' | '15min' | '30min' | '1hour' | '1day';
-
-export type EventColor = 'blue' | 'purple' | 'green' | 'orange' | 'red' | 'pink';
-
-// Hex color values for event colors
-export const EVENT_COLOR_VALUES: Record<EventColor, string> = {
-  blue: '#c0c1ff',
-  purple: '#8083ff',
-  green: '#10b981',
-  orange: '#ffb783',
-  red: '#ffb4ab',
-  pink: '#ffacbe',
-};
-
-// Legacy interface for components using string dates
 export interface CalendarEvent {
   id: string;
   title: string;
-  description: string;
-  date: string; // YYYY-MM-DD format
-  startTime: string; // HH:MM format
-  endTime: string; // HH:MM format
-  color: string; // Hex color value
-  reminder: string;
-}
-
-export interface EventFormData {
-  title: string;
-  description: string;
   date: string;
   startTime: string;
   endTime: string;
+  description?: string;
   color: string;
-  reminder: string;
+  reminder: ReminderType;
 }
 
-export type ViewMode = 'month' | 'week' | 'day';
+export type ReminderType = 
+  | 'none'
+  | '5min'
+  | '15min'
+  | '30min'
+  | '1hour'
+  | '1day';
 
-export interface Calendar {
-  id: string;
-  name: string;
-  color: EventColor;
-  isDefault: boolean;
-  isShared: boolean;
-  ownerId?: string;
-  createdAt: Date;
-  updatedAt: Date;
+export interface EventFormData {
+  title: string;
+  date: string;
+  startTime: string;
+  endTime: string;
+  description: string;
+  color: string;
+  reminder: ReminderType;
 }
 
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  avatar?: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
+export const REMINDER_OPTIONS: { value: ReminderType; label: string }[] = [
+  { value: 'none', label: 'Yok' },
+  { value: '5min', label: '5 dakika önce' },
+  { value: '15min', label: '15 dakika önce' },
+  { value: '30min', label: '30 dakika önce' },
+  { value: '1hour', label: '1 saat önce' },
+  { value: '1day', label: '1 gün önce' },
+];
+
+export const COLOR_OPTIONS = [
+  { value: '#c0c1ff', name: 'primary' },
+  { value: '#ffb783', name: 'tertiary' },
+  { value: '#ffb4ab', name: 'error' },
+  { value: '#8083ff', name: 'primary-container' },
+  { value: '#31394d', name: 'surface-bright' },
+  { value: '#d97721', name: 'tertiary-container' },
+  { value: '#34d399', name: 'emerald' },
+  { value: '#5eead4', name: 'teal' },
+];

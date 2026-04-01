@@ -4,13 +4,14 @@ import type { CalendarEvent } from '../types/event';
 import { eventReducer, initialEventState, type EventAction } from './eventReducer';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import { createEvent as createEventHelper, updateEvent as updateEventHelper } from '../utils/eventHelpers';
+import type { Dispatch } from 'react';
 import type { EventColor, ReminderType } from '../types/event';
 
 interface EventContextType {
   events: CalendarEvent[];
   isLoading: boolean;
   error: string | null;
-  dispatch: React.Dispatch<EventAction>;
+  dispatch: Dispatch<EventAction>;
   createEvent: (
     title: string,
     startDate: Date,
@@ -39,25 +40,27 @@ interface EventProviderProps {
 
 export function EventProvider({ children }: EventProviderProps) {
   const [state, dispatch] = useReducer(eventReducer, initialEventState);
-  const { value: storedEvents, setValue: setStoredEvents, isLoading: storageLoading, error: storageError } = 
+  const { value: storedEvents, setValue: setStoredEvents, isLoading: storageLoading, error: storageError } =
     useLocalStorage<CalendarEvent[]>(STORAGE_KEY, []);
 
-  // Sync stored events to state when loaded
+  // Sync stored events to state when loaded (from localStorage hydration)
   useEffect(() => {
-    if (!storageLoading && storedEvents.length > 0 && state.events.length === 0) {
+    if (!storageLoading && storedEvents.length > 0) {
       // Parse dates back from JSON
       const parsedEvents = storedEvents.map((event) => ({
         ...event,
         startDate: new Date(event.startDate),
         endDate: new Date(event.endDate),
+        createdAt: event.createdAt instanceof Date ? event.createdAt : new Date(event.createdAt),
+        updatedAt: event.updatedAt instanceof Date ? event.updatedAt : new Date(event.updatedAt),
       }));
       dispatch({ type: 'SET_EVENTS', payload: parsedEvents });
     }
-  }, [storageLoading, storedEvents, state.events.length]);
+  }, [storageLoading, storedEvents]);
 
   // Save events to localStorage whenever they change
   useEffect(() => {
-    if (!storageLoading && state.events.length > 0) {
+    if (!storageLoading) {
       setStoredEvents(state.events);
     }
   }, [state.events, storageLoading, setStoredEvents]);
@@ -99,8 +102,8 @@ export function EventProvider({ children }: EventProviderProps) {
 
   const getEventsByDateRange = useCallback((start: Date, end: Date) => {
     return state.events.filter((event) => {
-      const eventStart = new Date(event.startDate);
-      const eventEnd = new Date(event.endDate);
+      const eventStart = event.startDate;
+      const eventEnd = event.endDate;
       return eventStart <= end && eventEnd >= start;
     });
   }, [state.events]);

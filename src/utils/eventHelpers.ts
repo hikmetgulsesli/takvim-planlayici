@@ -2,11 +2,7 @@ import type { CalendarEvent, EventColor, ReminderType } from '../types/event';
 
 // Generate a UUID v4
 export function generateUUID(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
-  });
+  return crypto.randomUUID();
 }
 
 // Create a new event with generated ID and timestamps
@@ -61,30 +57,61 @@ export function importEventsFromJSON(
 ): { events: CalendarEvent[]; error: string | null } {
   try {
     const parsed = JSON.parse(jsonString);
-    
+
     if (!Array.isArray(parsed)) {
       return { events: [], error: 'Geçersiz format: Etkinlik listesi bekleniyor' };
     }
 
-    const importedEvents: CalendarEvent[] = parsed.map((item) => ({
-      id: item.id ?? generateUUID(),
-      title: item.title ?? 'İsimsiz Etkinlik',
-      description: item.description ?? '',
-      startDate: new Date(item.startDate),
-      endDate: new Date(item.endDate),
-      allDay: item.allDay ?? false,
-      color: item.color ?? 'blue',
-      reminder: item.reminder ?? 'none',
-      location: item.location ?? '',
-      createdAt: new Date(item.createdAt ?? Date.now()),
-      updatedAt: new Date(),
-    }));
+    let invalidCount = 0;
 
-    return { events: importedEvents, error: null };
+    const importedEvents: CalendarEvent[] = parsed.reduce(
+      (acc: CalendarEvent[], item: Record<string, unknown>) => {
+        const startDate = new Date(item.startDate as string);
+        const endDate = new Date(item.endDate as string);
+
+        // Validate required date fields: startDate and endDate must be parseable
+        if (
+          !item.startDate ||
+          !item.endDate ||
+          isNaN(startDate.getTime()) ||
+          isNaN(endDate.getTime())
+        ) {
+          invalidCount += 1;
+          return acc;
+        }
+
+        const rawCreatedAt = item.createdAt ? new Date(item.createdAt as string) : new Date();
+        const createdAt = isNaN(rawCreatedAt.getTime()) ? new Date() : rawCreatedAt;
+
+        acc.push({
+          id: (item.id as string) ?? generateUUID(),
+          title: (item.title as string) ?? 'İsimsiz Etkinlik',
+          description: (item.description as string) ?? '',
+          startDate,
+          endDate,
+          allDay: (item.allDay as boolean) ?? false,
+          color: (item.color as CalendarEvent['color']) ?? 'blue',
+          reminder: (item.reminder as CalendarEvent['reminder']) ?? 'none',
+          location: (item.location as string) ?? '',
+          createdAt,
+          updatedAt: new Date(item.updatedAt as string | number ?? Date.now()),
+        });
+
+        return acc;
+      },
+      [] as CalendarEvent[]
+    );
+
+    const error =
+      invalidCount > 0
+        ? `${invalidCount} geçersiz etkinlik içe aktarılamadı (geçersiz başlangıç/bitiş tarihi).`
+        : null;
+
+    return { events: importedEvents, error };
   } catch (error) {
-    return { 
-      events: [], 
-      error: `JSON ayrıştırma hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}` 
+    return {
+      events: [],
+      error: `JSON ayrıştırma hatası: ${error instanceof Error ? error.message : 'Bilinmeyen hata'}`
     };
   }
 }

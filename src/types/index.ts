@@ -36,7 +36,7 @@ export const REMINDER_OPTIONS: { value: ReminderType; label: string }[] = [
   { value: '1day', label: '1 gün önce' },
 ];
 
-export const COLOR_OPTIONS = [
+export const COLOR_OPTIONS: { value: string; name: string }[] = [
   { value: '#c0c1ff', name: 'primary' },
   { value: '#ffb783', name: 'tertiary' },
   { value: '#ffb4ab', name: 'error' },

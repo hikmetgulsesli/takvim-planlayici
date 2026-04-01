@@ -1,7 +1,8 @@
 import React, { useState, useCallback } from 'react';
 import { EventModal } from './components/EventModal';
+import { EventDetailModal } from './components/EventDetailModal';
 import { EventProvider, useEvents } from './context/EventContext';
-import type { EventFormData } from './types';
+import type { EventFormData, CalendarEvent } from './types';
 
 function Toast({ message, onClose }: { message: string; onClose: () => void }) {
   React.useEffect(() => {
@@ -17,26 +18,55 @@ function Toast({ message, onClose }: { message: string; onClose: () => void }) {
 }
 
 function AppContent() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [selectedDate, setSelectedDate] = useState<string | undefined>();
   const [toast, setToast] = useState<string | null>(null);
-  const { createEvent } = useEvents();
+  const { createEvent, updateEvent, deleteEvent, getEventsByDate } = useEvents();
 
-  const handleOpenModal = useCallback((date?: string) => {
+  const handleOpenCreateModal = useCallback((date?: string) => {
     setSelectedDate(date);
-    setIsModalOpen(true);
+    setIsCreateModalOpen(true);
   }, []);
 
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
+  const handleCloseCreateModal = useCallback(() => {
+    setIsCreateModalOpen(false);
     setSelectedDate(undefined);
   }, []);
 
-  const handleSubmit = useCallback((data: EventFormData) => {
+  const handleCreateSubmit = useCallback((data: EventFormData) => {
     createEvent(data);
-    setIsModalOpen(false);
+    setIsCreateModalOpen(false);
     setToast('Etkinlik başarıyla oluşturuldu!');
   }, [createEvent]);
+
+  const handleOpenDetailModal = useCallback((event: CalendarEvent) => {
+    setSelectedEvent(event);
+    setIsDetailModalOpen(true);
+  }, []);
+
+  const handleCloseDetailModal = useCallback(() => {
+    setIsDetailModalOpen(false);
+    setSelectedEvent(null);
+  }, []);
+
+  const handleEditEvent = useCallback((id: string, data: Partial<EventFormData>) => {
+    updateEvent(id, data);
+    setToast('Etkinlik başarıyla güncellendi!');
+  }, [updateEvent]);
+
+  const handleDeleteEvent = useCallback((id: string) => {
+    deleteEvent(id);
+    setToast('Etkinlik başarıyla silindi!');
+  }, [deleteEvent]);
+
+  // Generate calendar days (7 days from yesterday)
+  const calendarDays = Array.from({ length: 7 }).map((_, i) => {
+    const date = new Date();
+    date.setDate(date.getDate() - 1 + i);
+    return date;
+  });
 
   return (
     <div className="min-h-screen bg-[#0b1326] text-[#dae2fd]">
@@ -98,7 +128,7 @@ function AppContent() {
             </p>
           </div>
           <button
-            onClick={() => handleOpenModal()}
+            onClick={() => handleOpenCreateModal()}
             className="bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-[#0d0096] px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-[#c0c1ff]/20 hover:scale-105 transition-transform cursor-pointer"
           >
             <span className="material-symbols-outlined">add</span>
@@ -107,16 +137,15 @@ function AppContent() {
         </div>
 
         <div className="grid grid-cols-7 gap-px bg-[#2d3449]/20 rounded-2xl overflow-hidden border border-[#464554]/15">
-          {Array.from({ length: 7 }).map((_, i) => {
-            const date = new Date();
-            date.setDate(date.getDate() - 1 + i);
+          {calendarDays.map((date, i) => {
             const dateStr = date.toISOString().split('T')[0];
             const isToday = i === 1;
-            
+            const dayEvents = getEventsByDate(dateStr || '');
+
             return (
               <div
                 key={i}
-                onClick={() => handleOpenModal(dateStr)}
+                onClick={() => handleOpenCreateModal(dateStr)}
                 className={`p-4 h-48 group transition-colors cursor-pointer ${
                   isToday
                     ? 'bg-[#171f33] border-2 border-[#c0c1ff]/30'
@@ -133,20 +162,45 @@ function AppContent() {
                   </span>
                   {isToday && <div className="w-2 h-2 rounded-full bg-[#c0c1ff]"></div>}
                 </div>
+                <div className="space-y-1">
+                  {dayEvents.map((event) => (
+                    <div
+                      key={event.id}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleOpenDetailModal(event);
+                      }}
+                      className="p-2 rounded text-xs font-medium cursor-pointer transition-transform hover:scale-[1.02]"
+                      style={{
+                        backgroundColor: `${event.color}20`,
+                        borderLeft: `2px solid ${event.color}`,
+                        color: event.color,
+                      }}
+                    >
+                      {event.title}
+                    </div>
+                  ))}
+                </div>
               </div>
             );
           })}
         </div>
       </main>
 
-      {isModalOpen && (
-        <EventModal
-          isOpen={isModalOpen}
-          onClose={handleCloseModal}
-          onSubmit={handleSubmit}
-          initialDate={selectedDate}
-        />
-      )}
+      <EventModal
+        isOpen={isCreateModalOpen}
+        onClose={handleCloseCreateModal}
+        onSubmit={handleCreateSubmit}
+        initialDate={selectedDate}
+      />
+
+      <EventDetailModal
+        event={selectedEvent}
+        isOpen={isDetailModalOpen}
+        onClose={handleCloseDetailModal}
+        onEdit={handleEditEvent}
+        onDelete={handleDeleteEvent}
+      />
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>

@@ -57,7 +57,6 @@ export function EventModal({ isOpen, onClose, onSubmit, initialDate }: EventModa
     setFormData((prev) => ({ ...prev, [field]: value }));
     setTouched((prev) => ({ ...prev, [field]: true }));
     
-    // Clear error when user starts typing
     if (errors[field as keyof FormErrors]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
@@ -69,7 +68,6 @@ export function EventModal({ isOpen, onClose, onSubmit, initialDate }: EventModa
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
     
-    // Mark all fields as touched
     setTouched({
       title: true,
       date: true,
@@ -82,7 +80,6 @@ export function EventModal({ isOpen, onClose, onSubmit, initialDate }: EventModa
 
     if (validate()) {
       onSubmit(formData);
-      // Reset form
       setFormData({
         title: '',
         date: getTodayString(),
@@ -99,7 +96,6 @@ export function EventModal({ isOpen, onClose, onSubmit, initialDate }: EventModa
 
   const handleCancel = useCallback(() => {
     onClose();
-    // Reset form state
     setFormData({
       title: '',
       date: initialDate ?? getTodayString(),

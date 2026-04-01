@@ -15,31 +15,32 @@ const EventContext = createContext<EventContextType | undefined>(undefined)
 
 const STORAGE_KEY = 'chronos_events'
 
-// Helper to get week dates
+// Helper to format a Date as local YYYY-MM-DD
+function localDateString(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+// Helper to get week dates as local date strings
 function getWeekDates(startDate: Date): string[] {
   const dates: string[] = []
   const start = new Date(startDate)
   start.setHours(0, 0, 0, 0)
-  
+
   // Adjust to Monday (Turkish week starts Monday)
   const day = start.getDay()
   const diff = start.getDate() - day + (day === 0 ? -6 : 1)
-  const monday = new Date(start.setDate(diff))
-  
+  const monday = new Date(start)
+  monday.setDate(diff)
+
   for (let i = 0; i < 7; i++) {
     const date = new Date(monday)
     date.setDate(monday.getDate() + i)
-    const dateStr = date.toISOString().split('T')[0]
-    if (dateStr) {
-      dates.push(dateStr)
-    }
+    dates.push(localDateString(date))
   }
   return dates
-}
-
-function formatDate(d: Date): string {
-  const dateStr = d.toISOString().split('T')[0]
-  return dateStr ?? ''
 }
 
 export function EventProvider({ children }: { children: ReactNode }) {
@@ -58,12 +59,12 @@ export function EventProvider({ children }: { children: ReactNode }) {
     const diff = today.getDate() - day + (day === 0 ? -6 : 1)
     const monday = new Date(today)
     monday.setDate(today.getDate() + diff)
-    
+
     return [
       {
         id: '1',
         title: 'Editoryal Toplantı',
-        date: formatDate(monday),
+        date: localDateString(monday),
         startTime: '10:00',
         endTime: '11:30',
         color: '#c0c1ff',
@@ -72,7 +73,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
       {
         id: '2',
         title: 'Lansman Hazırlığı',
-        date: formatDate(new Date(monday.getTime() + 2 * 24 * 60 * 60 * 1000)),
+        date: localDateString(new Date(monday.getTime() + 2 * 24 * 60 * 60 * 1000)),
         startTime: '14:00',
         endTime: '16:00',
         color: '#ffb783',
@@ -81,7 +82,7 @@ export function EventProvider({ children }: { children: ReactNode }) {
       {
         id: '3',
         title: 'Tasarım Revizyonu',
-        date: formatDate(today),
+        date: localDateString(today),
         startTime: '14:30',
         endTime: '15:30',
         color: '#8083ff',
@@ -128,8 +129,8 @@ export function EventProvider({ children }: { children: ReactNode }) {
 
   const getEventsByMonth = useCallback((year: number, month: number): Event[] => {
     return events.filter((e) => {
-      const eventDate = new Date(e.date)
-      return eventDate.getFullYear() === year && eventDate.getMonth() === month
+      const [ey, em] = e.date.split('-').map(Number)
+      return ey === year && em === month + 1
     })
   }, [events])
 

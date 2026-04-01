@@ -3,7 +3,7 @@
 export interface Event {
   id: string
   title: string
-  date: string // YYYY-MM-DD format
+  date: string // YYYY-MM-DD format (local)
   startTime: string // HH:mm format
   endTime: string // HH:mm format
   description?: string
@@ -12,14 +12,3 @@ export interface Event {
 }
 
 export type ViewMode = 'month' | 'week' | 'day'
-
-export interface CalendarEvent {
-  id: string
-  title: string
-  date: string
-  startTime: string
-  endTime: string
-  description?: string
-  color: string
-  reminder?: string
-}

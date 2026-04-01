@@ -1,6 +1,6 @@
-import { useState, useCallback, useEffect } from 'react';
-import type { EventFormData, CalendarEvent } from '../types';
-import { showToast } from './Toast';
+import React, { useState, useCallback, useEffect } from 'react';
+import type { EventFormData, CalendarEvent } from '../types/index';
+import { showToast } from './common/Toast';
 
 interface EventFormModalProps {
   isOpen: boolean;
@@ -53,21 +53,26 @@ export function EventFormModal({
   const [errors, setErrors] = useState<Partial<Record<keyof EventFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof EventFormData, boolean>>>({});
 
-  // Reset form when modal opens
+  // Reset form when modal opens - use a ref to track previous isOpen state
+  const wasOpenRef = React.useRef(false);
   useEffect(() => {
-    if (isOpen) {
-      setFormData({
-        title: initialData?.title ?? '',
-        date: initialData?.date ?? getTodayString(),
-        startTime: initialData?.startTime ?? '09:00',
-        endTime: initialData?.endTime ?? '10:00',
-        description: initialData?.description ?? '',
-        color: initialData?.color ?? COLOR_OPTIONS[0]?.value ?? '#c0c1ff',
-        reminder: initialData?.reminder ?? 'none',
+    if (isOpen && !wasOpenRef.current) {
+      // Modal just opened - reset form in a microtask to avoid sync setState
+      Promise.resolve().then(() => {
+        setFormData({
+          title: initialData?.title ?? '',
+          date: initialData?.date ?? getTodayString(),
+          startTime: initialData?.startTime ?? '09:00',
+          endTime: initialData?.endTime ?? '10:00',
+          description: initialData?.description ?? '',
+          color: initialData?.color ?? COLOR_OPTIONS[0]?.value ?? '#c0c1ff',
+          reminder: initialData?.reminder ?? 'none',
+        });
+        setErrors({});
+        setTouched({});
       });
-      setErrors({});
-      setTouched({});
     }
+    wasOpenRef.current = isOpen;
   }, [isOpen, initialData]);
 
   const validate = useCallback((): boolean => {

@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import type { CalendarEvent } from '../types';
+import type { CalendarEvent } from '../types/index';
 
 interface DailyViewProps {
   date: Date;
@@ -61,21 +61,6 @@ const isToday = (date: Date): boolean => {
 const getCurrentTimePosition = (): number => {
   const now = new Date();
   return now.getHours() * 60 + now.getMinutes();
-};
-
-const parseTimeToMinutes = (time: string): number => {
-  const parts = time.split(':');
-  const hours = parseInt(parts[0] ?? '0', 10);
-  const minutes = parseInt(parts[1] ?? '0', 10);
-  return hours * 60 + minutes;
-};
-
-const getEventPosition = (startTime: string, endTime: string): { top: number; height: number } => {
-  const startMinutes = parseTimeToMinutes(startTime);
-  const endMinutes = parseTimeToMinutes(endTime);
-  const top = (startMinutes / 1440) * 100;
-  const height = ((endMinutes - startMinutes) / 1440) * 100;
-  return { top, height };
 };
 
 export const DailyView: FC<DailyViewProps> = ({

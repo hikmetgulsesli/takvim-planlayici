@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import type { CalendarEvent } from '../types';
+import type { CalendarEvent } from '../types/index';
 
 interface WeeklyViewProps {
   date: Date;
@@ -82,8 +82,8 @@ export const WeeklyView: FC<WeeklyViewProps> = ({
   onToday,
 }) => {
   const weekDays = getWeekDays(date);
-  const weekStart = weekDays[0];
-  const weekEnd = weekDays[6];
+  const weekStart = weekDays[0]!;
+  const weekEnd = weekDays[6]!;
 
   const formatWeekRange = (): string => {
     const startMonth = weekStart.getMonth();

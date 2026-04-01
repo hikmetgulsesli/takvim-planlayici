@@ -1,123 +1,94 @@
 import type { ReactNode } from 'react';
-import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import type { CalendarEvent } from '../types/event';
-import { eventReducer, initialEventState, type EventAction } from './eventReducer';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { createEvent as createEventHelper, updateEvent as updateEventHelper } from '../utils/eventHelpers';
-import type { Dispatch } from 'react';
-import type { EventColor, ReminderType } from '../types/event';
+import { createContext, useContext, useState, useCallback } from 'react';
+import type { CalendarEvent, EventFormData } from '../types';
 
 interface EventContextType {
   events: CalendarEvent[];
-  isLoading: boolean;
-  error: string | null;
-  dispatch: Dispatch<EventAction>;
-  createEvent: (
-    title: string,
-    startDate: Date,
-    endDate: Date,
-    options?: {
-      description?: string;
-      allDay?: boolean;
-      color?: EventColor;
-      reminder?: ReminderType;
-      location?: string;
-    }
-  ) => void;
-  updateEvent: (id: string, updates: Partial<Omit<CalendarEvent, 'id' | 'createdAt'>>) => void;
+  createEvent: (data: EventFormData) => CalendarEvent;
+  updateEvent: (id: string, data: Partial<EventFormData>) => void;
   deleteEvent: (id: string) => void;
+  getEventsByDate: (date: string) => CalendarEvent[];
   getEventById: (id: string) => CalendarEvent | undefined;
-  getEventsByDateRange: (start: Date, end: Date) => CalendarEvent[];
 }
 
 const EventContext = createContext<EventContextType | null>(null);
 
-const STORAGE_KEY = 'takvim-planlayici-events';
+const STORAGE_KEY = 'takvim-events';
 
 interface EventProviderProps {
   children: ReactNode;
 }
 
 export function EventProvider({ children }: EventProviderProps) {
-  const [state, dispatch] = useReducer(eventReducer, initialEventState);
-  const { value: storedEvents, setValue: setStoredEvents, isLoading: storageLoading, error: storageError } =
-    useLocalStorage<CalendarEvent[]>(STORAGE_KEY, []);
-
-  // Sync stored events to state when loaded (from localStorage hydration)
-  useEffect(() => {
-    if (!storageLoading && storedEvents.length > 0) {
-      // Parse dates back from JSON
-      const parsedEvents = storedEvents.map((event) => ({
-        ...event,
-        startDate: new Date(event.startDate),
-        endDate: new Date(event.endDate),
-        createdAt: event.createdAt instanceof Date ? event.createdAt : new Date(event.createdAt),
-        updatedAt: event.updatedAt instanceof Date ? event.updatedAt : new Date(event.updatedAt),
-      }));
-      dispatch({ type: 'SET_EVENTS', payload: parsedEvents });
+  const [events, setEvents] = useState<CalendarEvent[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return [];
+        }
+      }
     }
-  }, [storageLoading, storedEvents]);
+    return [];
+  });
 
-  // Save events to localStorage whenever they change
-  useEffect(() => {
-    if (!storageLoading) {
-      setStoredEvents(state.events);
-    }
-  }, [state.events, storageLoading, setStoredEvents]);
-
-  const createEvent = useCallback((
-    title: string,
-    startDate: Date,
-    endDate: Date,
-    options?: {
-      description?: string;
-      allDay?: boolean;
-      color?: EventColor;
-      reminder?: ReminderType;
-      location?: string;
-    }
-  ) => {
-    const newEvent = createEventHelper(title, startDate, endDate, options);
-    dispatch({ type: 'ADD_EVENT', payload: newEvent });
+  const createEvent = useCallback((data: EventFormData): CalendarEvent => {
+    const newEvent: CalendarEvent = {
+      id: crypto.randomUUID(),
+      ...data,
+    };
+    setEvents((prev) => {
+      const updated = [...prev, newEvent];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    });
+    return newEvent;
   }, []);
 
-  const updateEvent = useCallback((
-    id: string,
-    updates: Partial<Omit<CalendarEvent, 'id' | 'createdAt'>>
-  ) => {
-    const event = state.events.find((e) => e.id === id);
-    if (event) {
-      const updatedEvent = updateEventHelper(event, updates);
-      dispatch({ type: 'UPDATE_EVENT', payload: updatedEvent });
-    }
-  }, [state.events]);
+  const updateEvent = useCallback((id: string, data: Partial<EventFormData>) => {
+    setEvents((prev) => {
+      const updated = prev.map((event) => {
+        if (event.id === id) {
+          return { ...event, ...data };
+        }
+        return event;
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    });
+  }, []);
 
   const deleteEvent = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_EVENT', payload: id });
+    setEvents((prev) => {
+      const updated = prev.filter((event) => event.id !== id);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    });
   }, []);
 
-  const getEventById = useCallback((id: string) => {
-    return state.events.find((event) => event.id === id);
-  }, [state.events]);
+  const getEventsByDate = useCallback((date: string) => {
+    return events.filter((event) => event.date === date);
+  }, [events]);
 
-  const getEventsByDateRange = useCallback((start: Date, end: Date) => {
-    return state.events.filter((event) => {
-      const eventStart = event.startDate;
-      const eventEnd = event.endDate;
-      return eventStart <= end && eventEnd >= start;
-    });
-  }, [state.events]);
+  const getEventById = useCallback((id: string) => {
+    return events.find((event) => event.id === id);
+  }, [events]);
 
   const value: EventContextType = {
-    events: state.events,
-    isLoading: storageLoading,
-    error: storageError,
-    dispatch,
+    events,
     createEvent,
     updateEvent,
     deleteEvent,
+    getEventsByDate,
     getEventById,
-    getEventsByDateRange,
   };
 
   return (

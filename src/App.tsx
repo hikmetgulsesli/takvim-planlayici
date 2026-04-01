@@ -1,5 +1,12 @@
+import { EventProvider } from './contexts/EventContext'
+import { CalendarPage } from './components/CalendarPage'
+
 function App() {
-  return <div className="p-4">Takvim Planlayıcı</div>
+  return (
+    <EventProvider>
+      <CalendarPage />
+    </EventProvider>
+  )
 }
 
 export default App

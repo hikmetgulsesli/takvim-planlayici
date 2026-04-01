@@ -139,12 +139,14 @@ function AppContent() {
         </div>
       </main>
 
-      <EventModal
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-        onSubmit={handleSubmit}
-        initialDate={selectedDate}
-      />
+      {isModalOpen && (
+        <EventModal
+          isOpen={isModalOpen}
+          onClose={handleCloseModal}
+          onSubmit={handleSubmit}
+          initialDate={selectedDate}
+        />
+      )}
 
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </div>

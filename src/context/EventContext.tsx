@@ -1,135 +1,101 @@
-import type { ReactNode } from 'react';
-import { createContext, useContext, useReducer, useEffect, useCallback } from 'react';
-import type { CalendarEvent } from '../types/event';
-import { eventReducer, initialEventState, type EventAction } from './eventReducer';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { createEvent as createEventHelper, updateEvent as updateEventHelper } from '../utils/eventHelpers';
-import type { Dispatch } from 'react';
-import type { EventColor, ReminderType } from '../types/event';
+import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import type { CalendarEvent, EventFormData } from '../types';
 
 interface EventContextType {
   events: CalendarEvent[];
-  isLoading: boolean;
-  error: string | null;
-  dispatch: Dispatch<EventAction>;
-  createEvent: (
-    title: string,
-    startDate: Date,
-    endDate: Date,
-    options?: {
-      description?: string;
-      allDay?: boolean;
-      color?: EventColor;
-      reminder?: ReminderType;
-      location?: string;
-    }
-  ) => void;
-  updateEvent: (id: string, updates: Partial<Omit<CalendarEvent, 'id' | 'createdAt'>>) => void;
+  createEvent: (data: EventFormData) => CalendarEvent;
+  updateEvent: (id: string, data: Partial<EventFormData>) => void;
   deleteEvent: (id: string) => void;
-  getEventById: (id: string) => CalendarEvent | undefined;
-  getEventsByDateRange: (start: Date, end: Date) => CalendarEvent[];
+  getEventsByDate: (date: string) => CalendarEvent[];
+  invalidateNotifications: (eventId: string) => void;
 }
 
-const EventContext = createContext<EventContextType | null>(null);
+const EventContext = createContext<EventContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'takvim-planlayici-events';
+const STORAGE_KEY = 'takvim-events';
+const NOTIFICATION_KEY = 'takvim-notifications';
 
-interface EventProviderProps {
-  children: ReactNode;
-}
+export function EventProvider({ children }: { children: React.ReactNode }) {
+  const [events, setEvents] = useState<CalendarEvent[]>(() => {
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return [];
+        }
+      }
+    }
+    return [];
+  });
 
-export function EventProvider({ children }: EventProviderProps) {
-  const [state, dispatch] = useReducer(eventReducer, initialEventState);
-  const { value: storedEvents, setValue: setStoredEvents, isLoading: storageLoading, error: storageError } =
-    useLocalStorage<CalendarEvent[]>(STORAGE_KEY, []);
-
-  // Sync stored events to state when loaded (from localStorage hydration)
+  // Persist events to localStorage
   useEffect(() => {
-    if (!storageLoading && storedEvents.length > 0) {
-      // Parse dates back from JSON
-      const parsedEvents = storedEvents.map((event) => ({
-        ...event,
-        startDate: new Date(event.startDate),
-        endDate: new Date(event.endDate),
-        createdAt: event.createdAt instanceof Date ? event.createdAt : new Date(event.createdAt),
-        updatedAt: event.updatedAt instanceof Date ? event.updatedAt : new Date(event.updatedAt),
-      }));
-      dispatch({ type: 'SET_EVENTS', payload: parsedEvents });
-    }
-  }, [storageLoading, storedEvents]);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+  }, [events]);
 
-  // Save events to localStorage whenever they change
-  useEffect(() => {
-    if (!storageLoading) {
-      setStoredEvents(state.events);
+  const invalidateNotifications = useCallback((eventId: string) => {
+    if (typeof window === 'undefined') return;
+    
+    const stored = localStorage.getItem(NOTIFICATION_KEY);
+    if (stored) {
+      try {
+        const notifications = JSON.parse(stored);
+        delete notifications[eventId];
+        localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(notifications));
+      } catch {
+        // Ignore parse errors
+      }
     }
-  }, [state.events, storageLoading, setStoredEvents]);
-
-  const createEvent = useCallback((
-    title: string,
-    startDate: Date,
-    endDate: Date,
-    options?: {
-      description?: string;
-      allDay?: boolean;
-      color?: EventColor;
-      reminder?: ReminderType;
-      location?: string;
-    }
-  ) => {
-    const newEvent = createEventHelper(title, startDate, endDate, options);
-    dispatch({ type: 'ADD_EVENT', payload: newEvent });
   }, []);
 
-  const updateEvent = useCallback((
-    id: string,
-    updates: Partial<Omit<CalendarEvent, 'id' | 'createdAt'>>
-  ) => {
-    const event = state.events.find((e) => e.id === id);
-    if (event) {
-      const updatedEvent = updateEventHelper(event, updates);
-      dispatch({ type: 'UPDATE_EVENT', payload: updatedEvent });
-    }
-  }, [state.events]);
+  const createEvent = useCallback((data: EventFormData): CalendarEvent => {
+    const newEvent: CalendarEvent = {
+      id: crypto.randomUUID(),
+      ...data,
+    };
+    setEvents((prev) => [...prev, newEvent]);
+    return newEvent;
+  }, []);
+
+  const updateEvent = useCallback((id: string, data: Partial<EventFormData>) => {
+    setEvents((prev) =>
+      prev.map((event) => {
+        if (event.id === id) {
+          const updated = { ...event, ...data };
+          // Invalidate notifications if time-related fields changed
+          if (data.date !== undefined || data.startTime !== undefined || data.endTime !== undefined) {
+            invalidateNotifications(id);
+          }
+          return updated;
+        }
+        return event;
+      })
+    );
+  }, [invalidateNotifications]);
 
   const deleteEvent = useCallback((id: string) => {
-    dispatch({ type: 'DELETE_EVENT', payload: id });
-  }, []);
+    setEvents((prev) => prev.filter((event) => event.id !== id));
+    invalidateNotifications(id);
+  }, [invalidateNotifications]);
 
-  const getEventById = useCallback((id: string) => {
-    return state.events.find((event) => event.id === id);
-  }, [state.events]);
-
-  const getEventsByDateRange = useCallback((start: Date, end: Date) => {
-    return state.events.filter((event) => {
-      const eventStart = event.startDate;
-      const eventEnd = event.endDate;
-      return eventStart <= end && eventEnd >= start;
-    });
-  }, [state.events]);
-
-  const value: EventContextType = {
-    events: state.events,
-    isLoading: storageLoading,
-    error: storageError,
-    dispatch,
-    createEvent,
-    updateEvent,
-    deleteEvent,
-    getEventById,
-    getEventsByDateRange,
-  };
+  const getEventsByDate = useCallback((date: string) => {
+    return events.filter((event) => event.date === date);
+  }, [events]);
 
   return (
-    <EventContext.Provider value={value}>
+    <EventContext.Provider
+      value={{ events, createEvent, updateEvent, deleteEvent, getEventsByDate, invalidateNotifications }}
+    >
       {children}
     </EventContext.Provider>
   );
 }
 
-export function useEvents(): EventContextType {
+export function useEvents() {
   const context = useContext(EventContext);
-  if (context === null) {
+  if (context === undefined) {
     throw new Error('useEvents must be used within an EventProvider');
   }
   return context;

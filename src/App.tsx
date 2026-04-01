@@ -1,7 +1,8 @@
 import { Button } from './components/common';
 import { ToastContainer, showToast } from './components/common/Toast';
+import { EventProvider } from './context/EventContext';
 
-function App() {
+function AppContent() {
   return (
     <div className="min-h-screen bg-background text-on-surface flex flex-col items-center justify-center p-6">
       <h1 className="text-4xl font-bold font-headline mb-8 text-primary">
@@ -18,6 +19,14 @@ function App() {
       </Button>
       <ToastContainer />
     </div>
+  );
+}
+
+function App() {
+  return (
+    <EventProvider>
+      <AppContent />
+    </EventProvider>
   );
 }
 

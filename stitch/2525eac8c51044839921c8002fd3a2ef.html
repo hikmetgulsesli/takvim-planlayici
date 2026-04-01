@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chronos Editorial - Günlük Görünüm</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "surface-dim": "#0b1326",
+                        "surface-container-lowest": "#060e20",
+                        "surface-container-low": "#131b2e",
+                        "surface-variant": "#2d3449",
+                        "on-tertiary-container": "#452000",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "outline-variant": "#464554",
+                        "surface-tint": "#c0c1ff",
+                        "on-secondary-fixed": "#13144a",
+                        "error": "#ffb4ab",
+                        "on-surface-variant": "#c7c4d7",
+                        "surface-container-high": "#222a3d",
+                        "surface-container": "#171f33",
+                        "surface": "#0b1326",
+                        "background": "#0b1326",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-error-container": "#ffdad6",
+                        "tertiary-container": "#d97721",
+                        "surface-bright": "#31394d",
+                        "surface-container-highest": "#2d3449",
+                        "inverse-primary": "#494bd6",
+                        "on-primary-container": "#0d0096",
+                        "tertiary-fixed": "#ffdcc5",
+                        "primary-fixed": "#e1e0ff",
+                        "secondary-fixed": "#e1e0ff",
+                        "primary-container": "#8083ff",
+                        "on-secondary-fixed-variant": "#404178",
+                        "outline": "#908fa0",
+                        "on-primary": "#1000a9",
+                        "inverse-on-surface": "#283044",
+                        "error-container": "#93000a",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "on-surface": "#dae2fd",
+                        "on-primary-fixed": "#07006c",
+                        "on-secondary-container": "#b2b3f2",
+                        "on-tertiary-fixed-variant": "#703700",
+                        "on-error": "#690005",
+                        "on-secondary": "#292a60",
+                        "tertiary": "#ffb783",
+                        "primary": "#c0c1ff",
+                        "on-tertiary": "#4f2500",
+                        "secondary-container": "#42447b",
+                        "on-background": "#dae2fd",
+                        "tertiary-fixed-dim": "#ffb783",
+                        "secondary": "#c0c1ff",
+                        "on-tertiary-fixed": "#301400",
+                        "inverse-surface": "#dae2fd"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#0b1326] shadow-[0_8px_32px_rgba(99,102,241,0.08)] transition-all duration-300">
+<div class="flex items-center gap-12">
+<span class="text-xl font-bold text-[#c0c1ff] tracking-tighter font-headline">Chronos Editorial</span>
+<nav class="hidden md:flex items-center gap-8 font-headline font-bold text-sm tracking-tight">
+<a class="text-slate-400 font-medium hover:text-slate-200 hover:bg-white/5 transition-all duration-300" href="#">Ay</a>
+<a class="text-slate-400 font-medium hover:text-slate-200 hover:bg-white/5 transition-all duration-300" href="#">Hafta</a>
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1" href="#">Gün</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-symbols-outlined">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden border border-primary/20">
+<img class="w-full h-full object-cover" data-alt="Close-up portrait of a professional curator with a minimalist background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvHUtrCn1RdYObRX8n3M2Ap9CX9ylU6NzuLknvM8ZEYskHXXRdAEIYTTNGit3LEsDnD05sacf3HaJ7z2AYyuSpxVERtvNBDXFXu5RSC9lpkp6YzHoLI4nPC_Y9LTPIgoOA3ZgQZXR5bC1-vbv2rDLwaM6M1eG75fpRogC1oXGmt76omdgMgnwXt1eHINzSTejDIgjsSSHK4pjlvHqTNmQbPnGRpMlFg0Rn3krF_D1Lbls9hP9xPG1gQkOx2KFaYG1flrm4HeF4O0j7"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] w-72 mt-20">
+<div class="mb-10 px-4">
+<h2 class="text-lg font-black text-[#c0c1ff] font-headline uppercase tracking-widest">The Curator</h2>
+<p class="text-xs text-slate-500 font-medium">Premium Plan</p>
+</div>
+<button class="mb-8 mx-2 bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-4 rounded-xl font-headline font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+            Yeni Etkinlik
+        </button>
+<nav class="flex flex-col gap-1 flex-grow">
+<a class="flex items-center gap-3 bg-[#c0c1ff]/10 text-[#c0c1ff] rounded-xl px-4 py-3 font-semibold translate-x-1 duration-200 font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Takvimlerim
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">group</span>
+                Paylaşılanlar
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+                Görevler
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">archive</span>
+                Arşiv
+            </a>
+</nav>
+<!-- Mini Calendar (Additional Contextual Element) -->
+<div class="mt-8 px-4 py-6 bg-surface-container rounded-2xl border border-outline-variant/10">
+<div class="flex justify-between items-center mb-4">
+<span class="text-xs font-bold font-headline text-primary">NISAN 2026</span>
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-xs cursor-pointer">chevron_left</span>
+<span class="material-symbols-outlined text-xs cursor-pointer">chevron_right</span>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-y-2 text-[10px] text-center text-slate-500 font-medium">
+<span>Pt</span><span>Sa</span><span>Ça</span><span>Pe</span><span>Cu</span><span>Ct</span><span>Pz</span>
+<span class="text-slate-700">30</span><span class="text-slate-700">31</span>
+<span class="bg-primary text-on-primary-container rounded-full w-5 h-5 flex items-center justify-center mx-auto">1</span>
+<span>2</span><span>3</span><span>4</span><span>5</span>
+<span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+</div>
+</div>
+<footer class="mt-auto flex flex-col gap-1">
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">help</span>
+                Yardım
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Çıkış
+            </a>
+</footer>
+</aside>
+<!-- Main Content Canvas -->
+<main class="ml-72 mt-20 p-10 min-h-screen">
+<!-- Date Header -->
+<header class="flex justify-between items-end mb-12">
+<div>
+<h1 class="text-6xl font-extrabold font-headline tracking-tighter text-on-surface">1 Nisan 2026</h1>
+<p class="text-primary font-headline font-bold text-xl mt-2 tracking-wide">ÇARŞAMBA, BAHAR DÖNEMI</p>
+</div>
+<div class="flex gap-4 mb-2">
+<button class="bg-surface-container-high hover:bg-surface-variant p-3 rounded-xl transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">today</span>
+</button>
+<button class="bg-surface-container-high hover:bg-surface-variant p-3 rounded-xl transition-colors border border-outline-variant/10">
+<span class="material-symbols-outlined">filter_list</span>
+</button>
+</div>
+</header>
+<!-- Daily Grid -->
+<div class="relative space-y-8">
+<!-- Hour Marker Logic: Spacing Scale 8 (2rem) as requested -->
+<!-- 09:00 Block -->
+<div class="flex gap-8 group">
+<div class="w-20 pt-1 text-right">
+<span class="font-headline font-bold text-slate-500 text-lg">09:00</span>
+</div>
+<div class="flex-grow pb-8">
+<div class="bg-surface-container-low rounded-2xl p-6 border-l-4 border-primary shadow-lg transition-all hover:translate-x-1">
+<div class="flex justify-between items-start">
+<div>
+<span class="bg-primary/10 text-primary text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider mb-2 inline-block">EDİTÖRYAL</span>
+<h3 class="text-xl font-bold font-headline mb-1">Sabah Bülteni Hazırlığı</h3>
+<p class="text-slate-400 text-sm flex items-center gap-1">
+<span class="material-symbols-outlined text-sm">location_on</span>
+                                    Merkez Ofis, Stüdyo A
+                                </p>
+</div>
+<div class="flex -space-x-2">
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Headshot of a creative team member in warm lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9YGOFA3xvlmSwzin9fKv3tMYk6sA110EJ6-PPVxE0aMcwqWFgdVNR5ArYQtb3syHitTinkP5CqE-4Clcg1FrCTCaYV11ytS-Fx82_vU4_qCf4y-ieUwjQ6-0omqurzW8lp99e-AFBr3YjL12xg-MIv_3kpGraIVTUtfVBCTzxFI5eLHKVY3p9gAoKnxf_rFVGJPHYScNMRVLKML8OMDbnfFD5zhIF-EOyB6y0ziLW5K5iTLpiI_pvtKdovrkpVxTA0ofnnF3xgcI1"/>
+<img class="w-8 h-8 rounded-full border-2 border-surface-container-low" data-alt="Headshot of a creative team member with glasses and a soft blue background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCs6gWTSQo75NNyLGfj14zG8SPbXf2jz0LFhh3i8AZN7LZMAg5_YoP0UZ7YChSWbGgB4NB8jJnF3LqpVnwWf5yaq4my-AoUkx268onWvvaSGfKP7RmgQVyx3-6mj5E1T22EWkfqORZLREChBARImFiRtz9_kw-o8F7w0qww2VUK-5rQGlrcZxTyd8ILJS-ujlyysgOJW9oOdBXWLIcKk4Tq6N5YV9Xopdifnw6sbcZqHDGhLPinmrxTEG9SPLcb0iG0miiTAGDseAR1"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 10:00 Block -->
+<div class="flex gap-8 group">
+<div class="w-20 pt-1 text-right">
+<span class="font-headline font-bold text-slate-500 text-lg">10:00</span>
+</div>
+<div class="flex-grow pb-8">
+<div class="bg-surface-container-low rounded-2xl p-6 border-l-4 border-tertiary shadow-lg transition-all hover:translate-x-1">
+<div class="flex justify-between items-start">
+<div class="flex gap-6 items-center">
+<div class="w-32 h-20 rounded-xl overflow-hidden bg-surface-variant flex-shrink-0">
+<img class="w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-500" data-alt="A clean, minimalist desk with a high-end laptop and a notebook on a dark wood surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB7xA92z9E-6YKXu3IqEZgOwFI6PivJcN-1DOYxwiAOw8KcSDc6Dj0hZDj6zjEFWG0HaW1DYLn0synPebzmM5bRKWwEeIMjed3wpC9qHJ_CGx2VZzeUtGp1CS8TNRYM11uJK8zBkhd5GnPrRPDdEW_j-ujb24uZnIdAmpiLWz3igPe5ixExPCk5Pj5WsfAvxM5yzX-U_kUmCgVrCey9p6IpbDmVqJrTUPU9oRaeMwzYqD3LObw_c7n_p80-WOlzgF7cJoew8rNxnSQR"/>
+</div>
+<div>
+<span class="bg-tertiary/10 text-tertiary text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider mb-2 inline-block">ÖNEMLİ</span>
+<h3 class="text-xl font-bold font-headline mb-1">Küratörlük Strateji Toplantısı</h3>
+<p class="text-slate-400 text-sm">Yeni sezon içerik planlaması ve bütçe analizi.</p>
+</div>
+</div>
+<span class="text-tertiary font-bold">10:00 - 11:30</span>
+</div>
+</div>
+</div>
+</div>
+<!-- 12:00 Block (Empty/Spacing) -->
+<div class="flex gap-8">
+<div class="w-20 pt-1 text-right">
+<span class="font-headline font-bold text-slate-700 text-lg">12:00</span>
+</div>
+<div class="flex-grow border-t border-outline-variant/10 mt-4 relative">
+<span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-surface px-4 text-[10px] text-slate-600 font-bold tracking-[0.2em] uppercase">Öğle Arası</span>
+</div>
+</div>
+<!-- 14:00 Block - Asymmetric Card -->
+<div class="flex gap-8 group">
+<div class="w-20 pt-1 text-right">
+<span class="font-headline font-bold text-slate-500 text-lg">14:00</span>
+</div>
+<div class="flex-grow pb-8">
+<div class="grid grid-cols-12 gap-4">
+<div class="col-span-8 bg-surface-container-highest rounded-2xl p-8 border-l-4 border-primary-container shadow-xl transition-all hover:scale-[1.01]">
+<h3 class="text-2xl font-extrabold font-headline mb-3 text-primary-fixed">Dergi Kapak Seçimi</h3>
+<p class="text-slate-300 body-md mb-6 leading-relaxed">Nisan ayı özel sayısı için son onay süreci. Sanat yönetmeni ile görsellerin üzerinden geçilecek.</p>
+<div class="flex items-center gap-4">
+<button class="bg-primary/20 text-primary-fixed text-xs font-bold py-2 px-4 rounded-lg hover:bg-primary/30 transition-colors">Dosyaları İncele</button>
+<span class="text-slate-500 text-xs">3 dosya eklendi</span>
+</div>
+</div>
+<div class="col-span-4 bg-surface-container-high rounded-2xl p-6 flex flex-col justify-between border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary-container text-4xl" style="font-variation-settings: 'FILL' 1;">palette</span>
+<div>
+<p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Konum</p>
+<p class="text-sm font-semibold">Tasarım Atölyesi</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- 16:00 Block -->
+<div class="flex gap-8 group">
+<div class="w-20 pt-1 text-right">
+<span class="font-headline font-bold text-slate-500 text-lg">16:00</span>
+</div>
+<div class="flex-grow pb-8">
+<div class="bg-error-container/20 rounded-2xl p-6 border-l-4 border-error shadow-lg">
+<div class="flex justify-between items-center">
+<div>
+<h3 class="text-lg font-bold font-headline text-error">Acil Revizyon: Lansman Metni</h3>
+<p class="text-on-error-container/60 text-sm">Deadline: 17:30</p>
+</div>
+<span class="material-symbols-outlined text-error animate-pulse">priority_high</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Floating Action Button (Asymmetric) -->
+<button class="fixed bottom-10 right-10 glass-panel w-16 h-16 rounded-2xl flex items-center justify-center text-primary border border-primary/30 shadow-[0_20px_50px_rgba(128,131,255,0.2)] hover:scale-110 active:scale-90 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</button>
+</body></html>

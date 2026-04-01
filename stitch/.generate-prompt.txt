@@ -1,0 +1,238 @@
+# takvim-planlayici — Ürün Gereksinim Dokümanı (PRD)
+
+## 1. Proje Genel Bakışı
+
+**Proje Adı:** takvim-planlayici  
+**Platform:** Web (SPA)  
+**Dil:** Türkçe arayüz  
+**Özet:** Kullanıcıların aylık, haftalık ve günlük görünümlerde etkinliklerini planlamasına, yönetmesine ve hatırlatıcılar almasına olanak tanıyan modern bir takvim uygulaması.
+
+**Hedef Kullanıcılar:** Bireysel kullanıcılar, günlük/haftalık planlama ihtiyacı olan herkes.
+
+**Temel Değer Önermesi:** Sade, hızlı, görsel olarak çekici ve kullanımı kolay bir planlama deneyimi. Tüm veriler tarayıcıda saklanır (localStorage), sunucu gerektirmez.
+
+---
+
+## 2. Hedef Platform
+
+- **Web SPA (Single Page Application)**
+- **Masaüstü öncelikli** (responsive mobil uyumlu)
+- Tarayıcı: Chrome, Firefox, Safari, Edge (son 2 versiyon)
+
+---
+
+## 3. Fonksiyonel Gereksinimler
+
+### 3.1 Takvim Görünümleri
+
+- **Aylık Görünüm (Monthly View):** Ana görünüm. 7 sütunlu (Pazartesi-Pazar) grid yapısında günler gösterilir. Etkinlikler gün hücreleri içinde listelenir (max 3 görünür, "+X more" ile devamı).
+- **Haftalık Görünüm (Weekly View):** 7 günlük sütun yapısı, saat bazlı zaman dilimleri (00:00-23:00). Etkinlikler sol kenarda başlama saatinden başlayarak uzunluklarına göre konumlanır.
+- **Günlük Görünüm (Daily View):** Seçili günün detaylı saat bazlı görünümü. Daha geniş etkinlik kartları.
+
+### 3.2 Etkinlik Yönetimi (CRUD)
+
+- **Oluşturma (Create):** Başlık, tarih, başlangıç saati, bitiş saati, açıklama, renk, hatırlatıcı tipi.
+- **Düzenleme (Edit):** Tüm alanlar güncellenebilir. Düzenleme modalı veya inline edit.
+- **Silme (Delete):** Onay dialogu ile silme. "Tümünü sil" seçeneği yok — bireysel silme.
+- **Görüntüleme (Read):** Etkinlik detay modalı ile tüm bilgiler görüntülenir.
+
+### 3.3 Etkinlik Renklendirme
+
+- 8 adet önceden tanımlı renk seçeneği (kırmızı, mavi, yeşil, sarı, mor, turunc, pembe, gri).
+- Renkler hem aylık hem haftalık hem günlük görünümde etkinlik kartlarında gösterilir.
+- Renk ataması zorunlu değil — varsayılan gri.
+
+### 3.4 Sürükle-Bırak (Drag & Drop)
+
+- Etkinlikler bir günden/haftadan başka birine sürüklenerek taşınabilir.
+- Haftalık görünümde etkinlikler zaman dilimleri arasında taşınabilir.
+- Koyu tema uyumlu sürükle-bırak görsel geri bildirimi.
+
+### 3.5 Hatırlatıcı Bildirimleri
+
+- **Tarayıcı Bildirimi (Notification API):** Kullanıcı izin verirse, etkinlik başlamadan önce bildirim gönderilir.
+- **Hatırlatıcı Seçenekleri:** 5 dk önce, 15 dk önce, 30 dk önce, 1 saat önce, 1 gün önce.
+- **In-app bildirim:** Bildirim izni verilmemişse, uygulama açıkken toast notification gösterilir.
+
+### 3.6 Veri Saklama
+
+- **localStorage:** Tüm etkinlik verileri tarayıcının localStorage'ında saklanır.
+- **Veri Yapısı:** JSON formatında etkinlik listesi.
+- **Export/Import:** Etkinliklerin JSON olarak dışa aktarılması ve içe aktarılması (settings sayfasından).
+
+### 3.7 Arama ve Filtreleme
+
+- Ana sayfada etkinlik başlığına göre arama kutusu.
+- Tarih aralığı ile filtreleme.
+
+---
+
+## 4. Teknik Gereksinimler
+
+### 4.1 Teknoloji Stack
+
+- **Framework:** React 18+ (Vite ile)
+- **Styling:** Tailwind CSS 3.x
+- **State Yönetimi:** React Context + useReducer (veya Zustand)
+- **Takvim Kütüphanesi:** custom implementasyon (date-fns ile tarih işlemleri)
+- **Drag & Drop:** @dnd-kit/core
+- **UI Bileşenleri:** Headless UI veya Radix UI + custom styling
+- **İkon:** Lucide React veya Heroicons
+- **Tarih İşlemleri:** date-fns, date-fns-tz
+- **Build Tool:** Vite 5.x
+
+### 4.2 Proje Yapısı
+
+```
+src/
+  components/
+    calendar/
+      MonthlyView.tsx
+      WeeklyView.tsx
+      DailyView.tsx
+      DayCell.tsx
+      EventCard.tsx
+      EventModal.tsx
+    common/
+      Button.tsx
+      Input.tsx
+      Modal.tsx
+      Toast.tsx
+  context/
+    EventContext.tsx
+    ThemeContext.tsx
+  hooks/
+    useLocalStorage.ts
+    useNotification.ts
+    useDragAndDrop.ts
+  pages/
+    CalendarPage.tsx
+    SettingsPage.tsx
+    NotFoundPage.tsx
+  utils/
+    dateUtils.ts
+    eventUtils.ts
+    constants.ts
+  types/
+    event.ts
+  App.tsx
+  main.tsx
+  index.css
+```
+
+### 4.3 Veri Modeli
+
+```typescript
+interface CalendarEvent {
+  id: string;           // UUID
+  title: string;       // Etkinlik başlığı
+  date: string;        // ISO date string (YYYY-MM-DD)
+  startTime: string;   // HH:mm format
+  endTime: string;     // HH:mm format
+  description: string; // Açıklama (opsiyonel)
+  color: string;       // Hex renk kodu veya预设 renk anahtarı
+  reminder: ReminderType; // Hatırlatıcı tipi
+  createdAt: string;    // ISO timestamp
+  updatedAt: string;   // ISO timestamp
+}
+
+type ReminderType = 'none' | '5min' | '15min' | '30min' | '1hour' | '1day';
+```
+
+### 4.4 Performans Gereksinimleri
+
+- İlk yükleme: < 2 saniye (Lighthouse score > 85)
+- Görünüm geçişleri: 60fps animasyonlar
+- localStorage okuma/yazma: async wrapper, UI blocking yok
+
+---
+
+## 5. UI/UX Gereksinimleri
+
+### 5.1 Tasarım Dili
+
+- **Tema:** Koyu tema (varsayılan, değiştirilebilir)
+- **Renk Paleti:**
+  - Background: #0f0f0f, #1a1a1a, #262626
+  - Surface: #1e1e1e, #2a2a2a
+  - Primary: #6366f1 (indigo)
+  - Text Primary: #fafafa
+  - Text Secondary: #a1a1aa
+  - Border: #3f3f46
+- **Tipografi:** Inter veya system-ui font ailesi
+- **Border Radius:** 8px kartlar, 6px butonlar
+- **Spacing:** 4px grid sistemi
+
+### 5.2 Sayfa Geçişleri ve Animasyonlar
+
+- Görünüm geçişleri (month ↔ week ↔ day): 200ms fade + slide
+- Modal açılış: 150ms scale + fade
+- Etkinlik sürükleme: elevation shadow + opacity
+- Toast notification: slide-in from top-right, 3sn otomatik kapanma
+
+### 5.3 Boş Durumlar (Empty States)
+
+- Hiç etkinlik yokken: Takvim ikonu + "Henüz etkinlik eklemediniz. Yeni etkinlik eklemek için + butonuna tıklayın."
+- Arama sonucu yok: "Arama kriterlerinize uygun etkinlik bulunamadı."
+
+---
+
+## 6. Sayfa Gezinme Yapısı
+
+- Tek sayfa uygulaması (SPA)
+- Görünüm geçişleri URL'yi değiştirmez (state-based)
+- Header: Logo/sayfa adı + görünüm seçici (month/week/day) + bugün butonu + + etkinlik butonu
+- Sidebar (opsiyonel, masaüstünde): Mini aylık takvim + yaklaşan etkinlikler listesi
+
+---
+
+## 7. Non-Functional Gereksinimler
+
+- **Erişilebilirlik:** WCAG 2.1 AA uyumu hedefi. Klavye navigasyonu, screen reader uyumlu.
+- **Responsive:** Mobile (375px+), Tablet (768px+), Desktop (1024px+)
+- **Güvenlik:** localStorage XSS riski bilinir — kullanıcı girdileri sanitize edilmeli.
+- **Tarayıcı Desteği:** Chrome 90+, Firefox 90+, Safari 15+, Edge 90+
+
+---
+
+## 8. Oyun Türü Uygulamalar İçin Ek Gereksinimler
+
+_(Bu proje bir oyun olmadığından uygulanmaz.)_
+
+---
+
+## 9. Milestone ve Teslimat Planı
+
+- **M1:** Proje kurulumu, temel bileşenler, aylık görünüm
+- **M2:** Etkinlik CRUD, renklendirme
+- **M3:** Haftalık ve günlük görünüm
+- **M4:** Sürükle-bırak, hatırlatıcı bildirimleri
+- **M5:** Ayarlar sayfası, export/import, polish
+
+---
+
+## 10. Ekranlar (Screens)
+
+| # | Ekran Adı | Tür | Açıklama |
+|---|-----------|-----|----------|
+| 1 | Ana Takvim (Aylık) | main-view | Aylık grid görünüm, etkinlik listeleri, navigasyon |
+| 2 | Haftalık Görünüm | main-view | Haftalık zaman dilimli görünüm |
+| 3 | Günlük Görünüm | main-view | Seçili günün detaylı görünümü |
+| 4 | Etkinlik Oluşturma Modalı | modal | Yeni etkinlik formu, tüm alanlar |
+| 5 | Etkinlik Düzenleme Modalı | modal | Mevcut etkinliği düzenleme formu |
+| 6 | Etkinlik Detay Modalı | modal | Etkinlik tüm bilgileri, silme/edit butonları |
+| 7 | Ayarlar Sayfası | settings | Profil, tema, bildirim tercihleri, export/import |
+| 8 | 404 / Bulunamadı Sayfası | error | Sayfa bulunamadı hata sayfası |
+| 9 | Boş Durum Sayfası | empty-state | Hiç etkinlik yokken gösterilen rehber ekran |
+| 10 | Arama Sonuçları Görünümü | overlay | Arama sonuçlarının dropdown/list görünümü |
+
+Generate a SEPARATE screen design for EVERY page, view, modal, dialog, tab panel, and settings screen described in this PRD. Do NOT skip ANY screen — even if it seems minor.
+
+MANDATORY SCREENS:
+- If the PRD mentions "settings" or "ayarlar" → generate a Settings screen
+- If the PRD mentions tabs or bottom navigation → generate EACH tab view as a separate screen
+- If the PRD mentions modals (statistics, help, share, confirmation) → generate each as a separate screen
+- If the PRD mentions error states, empty states, loading states → generate those too
+- Generate at least as many screens as there are distinct views/pages/modals in the PRD
+
+All visible text must be in Turkish. Use a dark, modern theme.

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chronos Editorial - Etkinlik Detayları</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#0b1326",
+            "surface-container-lowest": "#060e20",
+            "surface-container-low": "#131b2e",
+            "surface-variant": "#2d3449",
+            "on-tertiary-container": "#452000",
+            "secondary-fixed-dim": "#c0c1ff",
+            "outline-variant": "#464554",
+            "surface-tint": "#c0c1ff",
+            "on-secondary-fixed": "#13144a",
+            "error": "#ffb4ab",
+            "on-surface-variant": "#c7c4d7",
+            "surface-container-high": "#222a3d",
+            "surface-container": "#171f33",
+            "surface": "#0b1326",
+            "background": "#0b1326",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "on-error-container": "#ffdad6",
+            "tertiary-container": "#d97721",
+            "surface-bright": "#31394d",
+            "surface-container-highest": "#2d3449",
+            "inverse-primary": "#494bd6",
+            "on-primary-container": "#0d0096",
+            "tertiary-fixed": "#ffdcc5",
+            "primary-fixed": "#e1e0ff",
+            "secondary-fixed": "#e1e0ff",
+            "primary-container": "#8083ff",
+            "on-secondary-fixed-variant": "#404178",
+            "outline": "#908fa0",
+            "on-primary": "#1000a9",
+            "inverse-on-surface": "#283044",
+            "error-container": "#93000a",
+            "primary-fixed-dim": "#c0c1ff",
+            "on-surface": "#dae2fd",
+            "on-primary-fixed": "#07006c",
+            "on-secondary-container": "#b2b3f2",
+            "on-tertiary-fixed-variant": "#703700",
+            "on-error": "#690005",
+            "on-secondary": "#292a60",
+            "tertiary": "#ffb783",
+            "primary": "#c0c1ff",
+            "on-tertiary": "#4f2500",
+            "secondary-container": "#42447b",
+            "on-background": "#dae2fd",
+            "tertiary-fixed-dim": "#ffb783",
+            "secondary": "#c0c1ff",
+            "on-tertiary-fixed": "#301400",
+            "inverse-surface": "#dae2fd"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .glass-effect {
+      background: rgba(45, 52, 73, 0.6);
+      backdrop-filter: blur(12px);
+    }
+  </style>
+</head>
+<body class="bg-surface-dim text-on-surface font-body min-h-screen flex items-center justify-center p-4">
+<!-- Background Content (Simulated) -->
+<div class="fixed inset-0 z-0 overflow-hidden pointer-events-none opacity-20">
+<div class="absolute top-0 left-0 w-full h-full flex flex-col p-8 gap-8">
+<div class="h-20 bg-surface-container rounded-xl w-full"></div>
+<div class="flex gap-8 flex-1">
+<div class="w-72 bg-surface-container rounded-xl h-full"></div>
+<div class="flex-1 grid grid-cols-7 gap-4">
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+<div class="bg-surface-container h-full rounded-xl"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Overlay -->
+<div class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+<!-- Modal Container -->
+<div class="w-full max-w-2xl bg-surface-container-low rounded-[2rem] overflow-hidden shadow-[0_32px_64px_rgba(0,0,0,0.5),0_0_0_1px_rgba(255,255,255,0.05)] border-none">
+<!-- Top Action Bar -->
+<div class="flex items-center justify-between px-8 py-6 bg-surface-container">
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 transition-all font-semibold text-sm">
+<span class="material-symbols-outlined text-[20px]">edit</span>
+            Düzenle
+          </button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-xl hover:bg-error/10 text-error/80 hover:text-error transition-all font-semibold text-sm">
+<span class="material-symbols-outlined text-[20px]">delete</span>
+            Sil
+          </button>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container-highest text-on-surface-variant hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Scrollable Content -->
+<div class="p-8 space-y-8 overflow-y-auto max-h-[819px]">
+<!-- Header Section -->
+<header class="space-y-4">
+<div class="flex items-center gap-3">
+<span class="px-3 py-1 rounded-full bg-primary-container text-on-primary-container text-[10px] font-bold tracking-widest uppercase">STRATEJİ</span>
+<div class="w-3 h-3 rounded-full bg-primary shadow-[0_0_8px_rgba(192,193,255,0.5)]"></div>
+</div>
+<h1 class="font-headline text-4xl md:text-5xl font-extrabold text-on-surface tracking-tight leading-tight">
+            2026 İçerik Stratejisi
+          </h1>
+</header>
+<!-- Meta Info Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-surface-container rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">calendar_today</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-outline uppercase tracking-wider">TARİH</p>
+<p class="text-on-surface font-semibold">14 Kasım 2025, Cuma</p>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-2xl">schedule</span>
+</div>
+<div>
+<p class="text-[10px] font-bold text-outline uppercase tracking-wider">SAAT ARALIĞI</p>
+<p class="text-on-surface font-semibold">14:00 — 16:30 <span class="text-outline text-sm font-normal ml-1">(2.5 Saat)</span></p>
+</div>
+</div>
+</div>
+<!-- Description -->
+<section class="space-y-3">
+<h3 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">notes</span>
+            Açıklama
+          </h3>
+<div class="text-on-surface-variant leading-relaxed font-body">
+<p>2026 yılı için belirlenen içerik vizyonunun ana hatlarını oluşturacağımız bu oturumda, dijital kürasyon modelimizi nasıl ölçeklendireceğimizi tartışacağız. Toplantı kapsamında şu başlıklar ele alınacaktır:</p>
+<ul class="list-disc ml-5 mt-4 space-y-2">
+<li>Yeni nesil görsel dilin tanımlanması</li>
+<li>Yapay zeka destekli editöryal süreç entegrasyonu</li>
+<li>Global pazar genişleme takvimi</li>
+</ul>
+</div>
+</section>
+<!-- Attendees -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-headline text-lg font-bold text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl">group</span>
+              Katılımcılar
+            </h3>
+<span class="text-xs font-semibold text-outline">4 Katılımcı</span>
+</div>
+<div class="flex flex-wrap gap-3">
+<!-- Attendee 1 -->
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-highest rounded-full">
+<img alt="Zeynep Kaya" class="w-8 h-8 rounded-full object-cover" data-alt="portrait of a young professional woman with a friendly expression in studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCVkG21gGhR8b03ev6EJpVvNYBZdybP0S9QVZWNHLv-7cFYQixksQKDBr6955EKC65e8Kt15ZPwoovHy-tNLgXzHDp4lKtZnv4EnHAiqSf4VoSOAAsf37WVSuLK7SXXB-xqumMcu24Rt053NEtcoI3W9fnq7y1vWE9RE7N54PJK-ZwCQYGXl6HI0T78zZFAoS-POmS7QdvtA2i9vCceOOao_TrYX7MmdNG6zPqxGRoS4AhDOviARD3a1o0_WkenT1sFIU0322oy-rnA"/>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Zeynep Kaya</span>
+<span class="text-[10px] text-outline leading-none">Moderatör</span>
+</div>
+</div>
+<!-- Attendee 2 -->
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-highest rounded-full">
+<img alt="Can Demir" class="w-8 h-8 rounded-full object-cover" data-alt="close up headshot of a creative professional man with glasses looking confident" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjrDng1YBMMDR9Q6RK0DoEemzHexFoMWmKjRssSvn7x-9inM4wGf96pAHWUwavPJ0JWLtyfu8k30kESXJAoySqtOu00JfaVxFDyLxX3aroHB8p3FZlsC-eMGJUFL79EukwC7JquaHMYpiNYP98oNb7p4StnC4a2I0OkscPdM-bOykXI0_HxqqowEjaV_eYg6ragyyg48EPD8siNz4q8kQJY0WH_G6I-hmwRxzt69Hl9qTerBGso7zVvqXP75rimm8uBsBc7L-phLjs"/>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Can Demir</span>
+<span class="text-[10px] text-outline leading-none">Strateji Direktörü</span>
+</div>
+</div>
+<!-- Attendee 3 -->
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-highest rounded-full border border-primary/20">
+<img alt="Selin Aras" class="w-8 h-8 rounded-full object-cover" data-alt="happy smiling woman with long brown hair professional headshot" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClcVIhIs_d7RVh1FTflzL1WEbYr6sJaNHsu74JGZfYP6a2_wT5SUWCSssFCuwdXcpw7t6BaHIQcuj9e3I3Gq6AQC8O7PohfheBMGraPe_3cPGw_rnr_RO9WG7eWGuj1JQy1tWJ5QAX_RjEB6_1WlJdHp4VhXdKgH8WeIutgoe--_vMUndsXgrR8PDqkUU-0BfE3WLX_sBw8V0qracP422gZ3qw53Iz7um3B1NvUTJK9BtmPhC6rin2Pp6dX-TnXFRYd2yej8xevIAA"/>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Selin Aras</span>
+<span class="text-[10px] text-primary leading-none">Senin Profilin</span>
+</div>
+</div>
+<!-- Attendee 4 -->
+<div class="flex items-center gap-3 p-2 pr-4 bg-surface-container-highest rounded-full">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center text-xs font-bold text-on-surface-variant">ME</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Mert Erden</span>
+<span class="text-[10px] text-outline leading-none">Tasarım Lideri</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Visual Hint -->
+<div class="pt-4 border-t border-white/5 flex justify-between items-center">
+<div class="flex items-center gap-2 text-outline-variant italic text-sm">
+<span class="material-symbols-outlined text-sm">history</span>
+            Son güncelleme: 2 saat önce
+          </div>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-primary"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-tertiary"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface-container-low bg-secondary-container"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button for Reference (Usually hidden in details view but requested in system prompt logic) -->
+<!-- We suppress it here as per "Task-Focused" rule in System Instructions -->
+</body></html>

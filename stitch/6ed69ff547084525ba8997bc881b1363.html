@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#0b1326",
+              "surface-container-lowest": "#060e20",
+              "surface-container-low": "#131b2e",
+              "surface-variant": "#2d3449",
+              "on-tertiary-container": "#452000",
+              "secondary-fixed-dim": "#c0c1ff",
+              "outline-variant": "#464554",
+              "surface-tint": "#c0c1ff",
+              "on-secondary-fixed": "#13144a",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#c7c4d7",
+              "surface-container-high": "#222a3d",
+              "surface-container": "#171f33",
+              "surface": "#0b1326",
+              "background": "#0b1326",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d97721",
+              "surface-bright": "#31394d",
+              "surface-container-highest": "#2d3449",
+              "inverse-primary": "#494bd6",
+              "on-primary-container": "#0d0096",
+              "tertiary-fixed": "#ffdcc5",
+              "primary-fixed": "#e1e0ff",
+              "secondary-fixed": "#e1e0ff",
+              "primary-container": "#8083ff",
+              "on-secondary-fixed-variant": "#404178",
+              "outline": "#908fa0",
+              "on-primary": "#1000a9",
+              "inverse-on-surface": "#283044",
+              "error-container": "#93000a",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-surface": "#dae2fd",
+              "on-primary-fixed": "#07006c",
+              "on-secondary-container": "#b2b3f2",
+              "on-tertiary-fixed-variant": "#703700",
+              "on-error": "#690005",
+              "on-secondary": "#292a60",
+              "tertiary": "#ffb783",
+              "primary": "#c0c1ff",
+              "on-tertiary": "#4f2500",
+              "secondary-container": "#42447b",
+              "on-background": "#dae2fd",
+              "tertiary-fixed-dim": "#ffb783",
+              "secondary": "#c0c1ff",
+              "on-tertiary-fixed": "#301400",
+              "inverse-surface": "#dae2fd"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-surface text-on-surface font-body selection:bg-primary/30">
+<!-- TopNavBar (Shared Component) -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#0b1326] shadow-[0_8px_32px_rgba(99,102,241,0.08)]">
+<div class="flex items-center gap-8">
+<span class="text-xl font-bold text-[#c0c1ff] tracking-tighter font-headline">Chronos Editorial</span>
+<div class="hidden md:flex gap-6 items-center">
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Ay</a>
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Hafta</a>
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Gün</a>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#c0c1ff] hover:bg-white/5 rounded-full transition-all duration-300 active:scale-95">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a professional male editor in a dark studio setting with soft indigo backlighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzXF7A9oyWi5kTTORqEzoSPi4g7tTXs0vceAsJ05uEvxG4kj4v_OKLAXLLiVypdpltDCSMPh8rmfJ2Fx3qs9pE0jTSqonWEthqC6fq5mx2WslqT_swzyw7raqXasUEmUcvAIijVEdEW-fWBNCnv2tTJ-GGdC6eC6ez0hBq85RlOPiOYjJZgTsO0aMC6Ir9zwHCTg7OswEkbKM7zJ00I7r-7EzcBy4OF8G6SymQoSCu5kJuldF_zsmJer2hDX61N-bLPVMHVFbdXqYj"/>
+</div>
+</div>
+</nav>
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] w-72 mt-20">
+<div class="mb-10 px-4">
+<h2 class="text-lg font-black text-[#c0c1ff] font-headline">The Curator</h2>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Premium Plan</p>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-['Inter'] text-sm font-medium">Takvimlerim</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-['Inter'] text-sm font-medium">Paylaşılanlar</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-['Inter'] text-sm font-medium">Görevler</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+<span class="font-['Inter'] text-sm font-medium">Arşiv</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 border-t border-white/5 pt-6">
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-['Inter'] text-sm font-medium">Yardım</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-['Inter'] text-sm font-medium">Çıkış</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-72 mt-20 p-12 min-h-screen">
+<header class="mb-12">
+<h1 class="text-4xl font-headline font-extrabold text-on-surface tracking-tight mb-2">Ayarlar</h1>
+<p class="text-on-surface-variant font-body">Kişisel tercihlerinizi ve uygulama deneyiminizi buradan yönetin.</p>
+</header>
+<div class="grid grid-cols-12 gap-8">
+<!-- Preferences Section -->
+<section class="col-span-12 lg:col-span-8 space-y-8">
+<!-- Tercihler Group -->
+<div class="bg-surface-container-low rounded-3xl p-8 space-y-8">
+<h2 class="text-xl font-headline font-bold text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="tune">tune</span>
+                        Tercihler
+                    </h2>
+<!-- Notification Switch -->
+<div class="flex items-center justify-between p-6 bg-surface-container rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" data-icon="notifications_active">notifications_active</span>
+</div>
+<div>
+<h3 class="font-headline font-semibold text-on-surface">Bildirim İzni</h3>
+<p class="text-sm text-on-surface-variant">Önemli etkinlikler ve hatırlatıcılar için anlık bildirim al.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Smart Reminder -->
+<div class="flex items-center justify-between p-6 bg-surface-container rounded-2xl">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-tertiary/10 flex items-center justify-center text-tertiary">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+</div>
+<div>
+<h3 class="font-headline font-semibold text-on-surface">Akıllı Hatırlatıcı</h3>
+<p class="text-sm text-on-surface-variant">Yapay zeka asistanınız programınıza göre önerilerde bulunsun.</p>
+</div>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-14 h-8 bg-surface-variant peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[4px] after:left-[4px] after:bg-white after:rounded-full after:h-6 after:w-6 after:transition-all peer-checked:bg-primary-container"></div>
+</label>
+</div>
+<!-- Theme Selection -->
+<div class="space-y-4 pt-4">
+<label class="text-sm font-label font-bold text-on-surface-variant tracking-widest uppercase">Tema Seçimi</label>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<!-- Theme Card: Night -->
+<div class="group relative cursor-pointer ring-2 ring-primary bg-surface-container-highest rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:scale-[1.02]">
+<div class="w-full aspect-video rounded-lg bg-surface-dim overflow-hidden flex items-center justify-center border border-primary/20">
+<div class="flex flex-col gap-1 w-2/3">
+<div class="h-1.5 w-full bg-primary/40 rounded-full"></div>
+<div class="h-1.5 w-1/2 bg-on-surface-variant/20 rounded-full"></div>
+</div>
+</div>
+<span class="font-headline text-sm font-bold text-primary">Gece</span>
+<div class="absolute top-2 right-2 w-5 h-5 bg-primary text-on-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined text-[14px]" data-icon="check" style="font-variation-settings: 'wght' 700;">check</span>
+</div>
+</div>
+<!-- Theme Card: Light -->
+<div class="group relative cursor-pointer bg-surface-container rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-surface-container-highest">
+<div class="w-full aspect-video rounded-lg bg-slate-100 overflow-hidden flex items-center justify-center">
+<div class="flex flex-col gap-1 w-2/3">
+<div class="h-1.5 w-full bg-blue-500/40 rounded-full"></div>
+<div class="h-1.5 w-1/2 bg-slate-300 rounded-full"></div>
+</div>
+</div>
+<span class="font-headline text-sm font-medium text-on-surface-variant">Gündüz</span>
+</div>
+<!-- Theme Card: Ocean -->
+<div class="group relative cursor-pointer bg-surface-container rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-surface-container-highest">
+<div class="w-full aspect-video rounded-lg bg-[#001e2f] overflow-hidden flex items-center justify-center">
+<div class="flex flex-col gap-1 w-2/3">
+<div class="h-1.5 w-full bg-cyan-400/40 rounded-full"></div>
+<div class="h-1.5 w-1/2 bg-cyan-900 rounded-full"></div>
+</div>
+</div>
+<span class="font-headline text-sm font-medium text-on-surface-variant">Okyanus</span>
+</div>
+<!-- Theme Card: Forest -->
+<div class="group relative cursor-pointer bg-surface-container rounded-2xl p-4 flex flex-col items-center gap-3 transition-all hover:bg-surface-container-highest">
+<div class="w-full aspect-video rounded-lg bg-[#0a1f0a] overflow-hidden flex items-center justify-center">
+<div class="flex flex-col gap-1 w-2/3">
+<div class="h-1.5 w-full bg-emerald-500/40 rounded-full"></div>
+<div class="h-1.5 w-1/2 bg-emerald-900 rounded-full"></div>
+</div>
+</div>
+<span class="font-headline text-sm font-medium text-on-surface-variant">Orman</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Data Management Group -->
+<div class="bg-surface-container-low rounded-3xl p-8">
+<h2 class="text-xl font-headline font-bold text-primary flex items-center gap-2 mb-8">
+<span class="material-symbols-outlined" data-icon="database">database</span>
+                        Veri Yönetimi
+                    </h2>
+<div class="grid md:grid-cols-2 gap-4">
+<button class="flex items-center gap-4 p-5 bg-surface-container rounded-2xl hover:bg-surface-container-highest transition-all group">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="upload">upload</span>
+</div>
+<div class="text-left">
+<h4 class="font-headline font-semibold text-on-surface">Dışa Aktar</h4>
+<p class="text-xs text-on-surface-variant">Takvim verilerini JSON/CSV olarak indir.</p>
+</div>
+</button>
+<button class="flex items-center gap-4 p-5 bg-surface-container rounded-2xl hover:bg-surface-container-highest transition-all group">
+<div class="w-10 h-10 rounded-lg bg-surface-variant flex items-center justify-center text-on-surface group-hover:bg-primary group-hover:text-on-primary transition-colors">
+<span class="material-symbols-outlined" data-icon="download">download</span>
+</div>
+<div class="text-left">
+<h4 class="font-headline font-semibold text-on-surface">İçe Aktar</h4>
+<p class="text-xs text-on-surface-variant">Başka bir dosyadan veri yükle.</p>
+</div>
+</button>
+</div>
+<!-- Dangerous Zone -->
+<div class="mt-8 pt-8 border-t border-white/5">
+<div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 p-6 bg-error-container/10 border border-error/10 rounded-2xl">
+<div>
+<h4 class="font-headline font-bold text-error flex items-center gap-2">
+<span class="material-symbols-outlined text-[20px]" data-icon="warning">warning</span>
+                                    Tehlikeli Bölge
+                                </h4>
+<p class="text-sm text-on-surface-variant mt-1">Bu işlem geri alınamaz. Tüm verileriniz, etkinlikleriniz ve tercihleriniz kalıcı olarak silinecektir.</p>
+</div>
+<button class="whitespace-nowrap px-6 py-3 bg-error text-on-error font-headline font-bold rounded-xl hover:opacity-90 transition-opacity flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="delete_forever">delete_forever</span>
+                                Tüm Verileri Temizle
+                            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Sidebar Info/Summary -->
+<aside class="col-span-12 lg:col-span-4 space-y-6">
+<!-- User Profile Summary Card -->
+<div class="glass-panel rounded-3xl p-8 relative overflow-hidden group">
+<div class="absolute -top-12 -right-12 w-48 h-48 bg-primary/10 rounded-full blur-3xl group-hover:bg-primary/20 transition-all"></div>
+<div class="relative flex flex-col items-center text-center">
+<div class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-primary to-tertiary mb-4">
+<img class="w-full h-full object-cover rounded-full" data-alt="professional male profile picture with high-end aesthetic lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuATqERHHVPSDeEjd42538BFMqE1R6vx4vtjVrHoLdGmn_crduj6Qrd_9u15pG7RI8xeWU3LVtnKo5bOiEbqSy36wEtSCrXSyoNnshvkVqeerRH_2niWGn-z36gGYe7D0OSJgbNIQSAFMGX3qf4JHz1zVu-4d4ZZ2JKR84ckVZL_WVys46XeJvdIsP6004Kewg2qBDEbAsgEr3smB2r2ipIJJPrYdU7Ndw58WT7ibhkA4bDD4OshtWUKOGxxE8Yi1VCOoSDqrtcJPqeM"/>
+</div>
+<h3 class="text-xl font-headline font-bold text-on-surface">Ahmet Yılmaz</h3>
+<p class="text-primary font-medium text-sm">Premium Üye</p>
+<div class="mt-6 grid grid-cols-2 gap-4 w-full">
+<div class="bg-white/5 rounded-2xl p-4">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Kayıtlı Görev</p>
+<p class="text-2xl font-headline font-extrabold text-on-surface">142</p>
+</div>
+<div class="bg-white/5 rounded-2xl p-4">
+<p class="text-[10px] text-on-surface-variant uppercase tracking-widest mb-1">Bu Ay</p>
+<p class="text-2xl font-headline font-extrabold text-tertiary">28</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Storage Info -->
+<div class="bg-surface-container-low rounded-3xl p-8">
+<h3 class="font-headline font-bold text-on-surface mb-6">Depolama</h3>
+<div class="space-y-4">
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full w-[42%] bg-gradient-to-r from-primary to-primary-container rounded-full shadow-[0_0_12px_rgba(192,193,255,0.4)]"></div>
+</div>
+<div class="flex justify-between text-xs font-medium">
+<span class="text-on-surface-variant">2.1 GB kullanıldı</span>
+<span class="text-on-surface">5 GB Toplam</span>
+</div>
+</div>
+<button class="mt-6 w-full py-3 border border-primary/20 text-primary font-headline font-bold rounded-xl hover:bg-primary/5 transition-colors">
+                        Depolama Alanını Artır
+                    </button>
+</div>
+<!-- Help/Doc Card -->
+<div class="bg-surface-container-highest rounded-3xl p-8 relative overflow-hidden">
+<div class="flex items-start gap-4">
+<div class="text-tertiary">
+<span class="material-symbols-outlined text-4xl" data-icon="auto_awesome">auto_awesome</span>
+</div>
+<div>
+<h4 class="font-headline font-bold text-on-surface">Yardıma mı ihtiyacın var?</h4>
+<p class="text-sm text-on-surface-variant mt-1 leading-relaxed">Özellikler hakkında daha fazla bilgi edinmek için rehberimizi inceleyin.</p>
+<a class="inline-flex items-center gap-2 mt-4 text-primary font-bold text-sm hover:underline" href="#">
+                                Rehberi Görüntüle
+                                <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Contextual FAB (Suppressed on settings, but included as per logic template) -->
+<!-- Removed as per "Contextual FAB Suppression" rule for Settings screens -->
+</body></html>

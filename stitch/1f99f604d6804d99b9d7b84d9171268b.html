@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chronos Editorial - Bildirim İzni</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#0b1326",
+              "surface-container-lowest": "#060e20",
+              "surface-container-low": "#131b2e",
+              "surface-variant": "#2d3449",
+              "on-tertiary-container": "#452000",
+              "secondary-fixed-dim": "#c0c1ff",
+              "outline-variant": "#464554",
+              "surface-tint": "#c0c1ff",
+              "on-secondary-fixed": "#13144a",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#c7c4d7",
+              "surface-container-high": "#222a3d",
+              "surface-container": "#171f33",
+              "surface": "#0b1326",
+              "background": "#0b1326",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d97721",
+              "surface-bright": "#31394d",
+              "surface-container-highest": "#2d3449",
+              "inverse-primary": "#494bd6",
+              "on-primary-container": "#0d0096",
+              "tertiary-fixed": "#ffdcc5",
+              "primary-fixed": "#e1e0ff",
+              "secondary-fixed": "#e1e0ff",
+              "primary-container": "#8083ff",
+              "on-secondary-fixed-variant": "#404178",
+              "outline": "#908fa0",
+              "on-primary": "#1000a9",
+              "inverse-on-surface": "#283044",
+              "error-container": "#93000a",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-surface": "#dae2fd",
+              "on-primary-fixed": "#07006c",
+              "on-secondary-container": "#b2b3f2",
+              "on-tertiary-fixed-variant": "#703700",
+              "on-error": "#690005",
+              "on-secondary": "#292a60",
+              "tertiary": "#ffb783",
+              "primary": "#c0c1ff",
+              "on-tertiary": "#4f2500",
+              "secondary-container": "#42447b",
+              "on-background": "#dae2fd",
+              "tertiary-fixed-dim": "#ffb783",
+              "secondary": "#c0c1ff",
+              "on-tertiary-fixed": "#301400",
+              "inverse-surface": "#dae2fd"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      .glass-modal {
+        background: rgba(45, 52, 73, 0.6);
+        backdrop-filter: blur(12px);
+      }
+    </style>
+</head>
+<body class="bg-surface-dim font-body text-on-surface overflow-hidden">
+<!-- Top Navigation Anchor -->
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#0b1326] shadow-[0_8px_32px_rgba(99,102,241,0.08)]">
+<div class="text-xl font-bold text-[#c0c1ff] tracking-tighter font-headline">
+            Chronos Editorial
+        </div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Ay</a>
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Hafta</a>
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1 font-headline text-sm tracking-tight transition-all duration-300" href="#">Gün</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-xl hover:bg-white/5 text-[#c0c1ff] transition-all duration-300 active:scale-95">
+<span class="material-symbols-outlined">settings</span>
+</button>
+</div>
+</nav>
+<!-- Sidebar Anchor -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] w-72 pt-24">
+<div class="mb-8 px-4">
+<div class="text-lg font-black text-[#c0c1ff] font-headline">The Curator</div>
+<div class="text-xs text-slate-400 font-medium">Premium Plan</div>
+</div>
+<button class="mb-8 mx-2 bg-gradient-to-br from-primary to-primary-container text-on-primary-container py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-primary/10 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+            Yeni Etkinlik
+        </button>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 bg-[#c0c1ff]/10 text-[#c0c1ff] rounded-xl px-4 py-3 font-semibold transition-colors" href="#">
+<span class="material-symbols-outlined">calendar_today</span>
+                Takvimlerim
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+                Paylaşılanlar
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">check_circle</span>
+                Görevler
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">archive</span>
+                Arşiv
+            </a>
+</nav>
+<div class="mt-auto space-y-1">
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">help</span>
+                Yardım
+            </a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined">logout</span>
+                Çıkış
+            </a>
+</div>
+</aside>
+<!-- Main Content Context (Blurred Backdrop for Modal) -->
+<main class="ml-72 pt-24 p-8 min-h-screen">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Mock Content for Depth -->
+<div class="col-span-2 space-y-8">
+<div class="flex items-end justify-between">
+<div>
+<h1 class="font-headline font-bold text-5xl text-on-surface tracking-tight">Eylül 2023</h1>
+<p class="text-slate-400 mt-2">Bugün için 4 bekleyen etkinliğiniz var.</p>
+</div>
+</div>
+<div class="grid grid-cols-7 gap-4">
+<div class="h-48 rounded-2xl bg-surface-container-low border-ghost border-white/5 p-4 flex flex-col justify-between">
+<span class="font-headline font-bold text-xl opacity-20">12</span>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-high p-4 flex flex-col justify-between">
+<span class="font-headline font-bold text-xl text-primary">13</span>
+<div class="bg-primary/10 text-primary p-2 rounded-lg text-xs font-semibold">
+                            Yayın Planı
+                        </div>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-low p-4">
+<span class="font-headline font-bold text-xl opacity-20">14</span>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-low p-4">
+<span class="font-headline font-bold text-xl opacity-20">15</span>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-low p-4">
+<span class="font-headline font-bold text-xl opacity-20">16</span>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-low p-4 opacity-40">
+<span class="font-headline font-bold text-xl">17</span>
+</div>
+<div class="h-48 rounded-2xl bg-surface-container-low p-4 opacity-40">
+<span class="font-headline font-bold text-xl">18</span>
+</div>
+</div>
+</div>
+<div class="space-y-6">
+<div class="p-6 rounded-3xl bg-surface-container-highest flex flex-col gap-4">
+<div class="text-on-surface-variant font-headline font-bold text-lg">Hızlı Bakış</div>
+<div class="flex items-center gap-4 p-4 rounded-2xl bg-surface-dim">
+<div class="w-12 h-12 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container">
+<span class="material-symbols-outlined">timer</span>
+</div>
+<div>
+<div class="font-semibold text-sm">Toplantı: Tasarım Revizyonu</div>
+<div class="text-xs text-slate-400">14:30 - 15:30</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- MODAL OVERLAY -->
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-[#060e20]/80 backdrop-blur-sm">
+<!-- DIALOG CONTAINER -->
+<div class="glass-modal w-full max-w-md mx-4 rounded-[2.5rem] p-10 relative overflow-hidden shadow-[0_32px_64px_rgba(128,131,255,0.12)] border border-white/5">
+<!-- Glow Effect -->
+<div class="absolute -top-24 -right-24 w-64 h-64 bg-primary/10 blur-[100px] rounded-full"></div>
+<div class="absolute -bottom-24 -left-24 w-64 h-64 bg-tertiary/5 blur-[100px] rounded-full"></div>
+<div class="relative z-10 flex flex-col items-center text-center">
+<!-- Icon Shell -->
+<div class="w-20 h-20 bg-surface-container-highest rounded-full flex items-center justify-center mb-8 shadow-inner border border-white/5">
+<div class="w-14 h-14 bg-gradient-to-br from-primary to-primary-container rounded-full flex items-center justify-center text-on-primary shadow-[0_0_20px_rgba(128,131,255,0.4)]">
+<span class="material-symbols-outlined text-3xl" data-weight="fill">notifications</span>
+</div>
+</div>
+<!-- Content -->
+<h2 class="font-headline font-extrabold text-3xl text-on-surface mb-4 tracking-tight">Bildirimlere İzin Ver</h2>
+<p class="font-body text-on-surface-variant leading-relaxed text-balance px-4 mb-10">
+                    Etkinlikleriniz başlamadan önce hatırlatıcı almak için tarayıcı bildirimlerini etkinleştirin.
+                </p>
+<!-- Actions -->
+<div class="w-full flex flex-col gap-3">
+<button class="w-full py-4 px-6 bg-gradient-to-r from-primary to-primary-container text-on-primary-container font-headline font-bold text-lg rounded-2xl hover:brightness-110 active:scale-95 transition-all duration-300 shadow-lg shadow-primary/20">
+                        İzin Ver
+                    </button>
+<button class="w-full py-4 px-6 bg-transparent text-primary font-headline font-bold text-base rounded-2xl hover:bg-white/5 transition-all duration-300">
+                        Şimdi Değil
+                    </button>
+</div>
+<!-- Footer Visual Decoration -->
+<div class="mt-8 flex gap-2">
+<div class="w-2 h-1 rounded-full bg-primary/20"></div>
+<div class="w-8 h-1 rounded-full bg-primary"></div>
+<div class="w-2 h-1 rounded-full bg-primary/20"></div>
+</div>
+</div>
+<!-- Closer Decoration (Visual only) -->
+<button class="absolute top-6 right-6 text-slate-500 hover:text-slate-200 transition-colors">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+</body></html>

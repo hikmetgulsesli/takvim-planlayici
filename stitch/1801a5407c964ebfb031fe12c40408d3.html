@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "surface-dim": "#0b1326",
+              "surface-container-lowest": "#060e20",
+              "surface-container-low": "#131b2e",
+              "surface-variant": "#2d3449",
+              "on-tertiary-container": "#452000",
+              "secondary-fixed-dim": "#c0c1ff",
+              "outline-variant": "#464554",
+              "surface-tint": "#c0c1ff",
+              "on-secondary-fixed": "#13144a",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#c7c4d7",
+              "surface-container-high": "#222a3d",
+              "surface-container": "#171f33",
+              "surface": "#0b1326",
+              "background": "#0b1326",
+              "on-primary-fixed-variant": "#2f2ebe",
+              "on-error-container": "#ffdad6",
+              "tertiary-container": "#d97721",
+              "surface-bright": "#31394d",
+              "surface-container-highest": "#2d3449",
+              "inverse-primary": "#494bd6",
+              "on-primary-container": "#0d0096",
+              "tertiary-fixed": "#ffdcc5",
+              "primary-fixed": "#e1e0ff",
+              "secondary-fixed": "#e1e0ff",
+              "primary-container": "#8083ff",
+              "on-secondary-fixed-variant": "#404178",
+              "outline": "#908fa0",
+              "on-primary": "#1000a9",
+              "inverse-on-surface": "#283044",
+              "error-container": "#93000a",
+              "primary-fixed-dim": "#c0c1ff",
+              "on-surface": "#dae2fd",
+              "on-primary-fixed": "#07006c",
+              "on-secondary-container": "#b2b3f2",
+              "on-tertiary-fixed-variant": "#703700",
+              "on-error": "#690005",
+              "on-secondary": "#292a60",
+              "tertiary": "#ffb783",
+              "primary": "#c0c1ff",
+              "on-tertiary": "#4f2500",
+              "secondary-container": "#42447b",
+              "on-background": "#dae2fd",
+              "tertiary-fixed-dim": "#ffb783",
+              "secondary": "#c0c1ff",
+              "on-tertiary-fixed": "#301400",
+              "inverse-surface": "#dae2fd"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-morphism {
+            background: rgba(45, 52, 73, 0.6);
+            backdrop-filter: blur(12px);
+        }
+        body {
+            background-color: #0b1326;
+            color: #dae2fd;
+        }
+    </style>
+</head>
+<body class="font-body selection:bg-primary-container selection:text-on-primary-container">
+<nav class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-8 h-20 bg-[#131b2e] tonal transition no-border shadow-[0_8px_32px_rgba(99,102,241,0.08)]">
+<div class="text-xl font-bold text-[#c0c1ff] tracking-tighter font-headline">Chronos Editorial</div>
+<div class="hidden md:flex gap-8">
+<a class="font-headline font-bold text-sm tracking-tight text-slate-400 font-medium hover:text-slate-200 transition-all duration-300" href="#">Ay</a>
+<a class="font-headline font-bold text-sm tracking-tight text-slate-400 font-medium hover:text-slate-200 transition-all duration-300" href="#">Hafta</a>
+<a class="font-headline font-bold text-sm tracking-tight text-slate-400 font-medium hover:text-slate-200 transition-all duration-300" href="#">Gün</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-[#c0c1ff] hover:bg-white/5 rounded-xl transition-all duration-300">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+<div class="w-10 h-10 rounded-full bg-surface-container-highest overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="close-up portrait of a creative professional in a dimly lit studio with subtle indigo rim lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCnKaRjLPhhY7IfTQj1RkEGJ0-tozHD4a6UlVFLOBH3BKiOcz2MCa8iKexv5BJSg8JrGYwzFDx0RS3tryeyDzdxKml6e1X0oE9VReYMCf4ir6duRf-b64KnBidyYSLC52_sOEHGBQhEJQUl42kvdQtd0sCWMfV_ZVdsCXb578LNU54WCFZmuM6PVbQ4-zZ0g1PtCfKE5QYc5IoW2-Q9rUw4wWJRoawt3ZdcN__ZX-gPvcKMo74niVe5fJS5U6--NY3TkVZimBCFpR4l"/>
+</div>
+</div>
+</nav>
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] w-72 pt-28">
+<div class="mb-8 px-4">
+<h2 class="text-lg font-black text-[#c0c1ff] font-headline">The Curator</h2>
+<p class="text-xs text-slate-500 font-medium uppercase tracking-widest">Premium Plan</p>
+</div>
+<nav class="flex-1 space-y-2">
+<div class="flex items-center gap-3 bg-[#c0c1ff]/10 text-[#c0c1ff] rounded-xl px-4 py-3 font-semibold font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Takvimlerim
+            </div>
+<div class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+                Paylaşılanlar
+            </div>
+<div class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+                Görevler
+            </div>
+<div class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+                Arşiv
+            </div>
+</nav>
+<div class="mt-auto space-y-2">
+<div class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+                Yardım
+            </div>
+<div class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors font-['Inter'] text-sm">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+                Çıkış
+            </div>
+</div>
+</aside>
+<main class="ml-72 pt-28 px-12 min-h-screen">
+<div class="mb-12 flex justify-between items-end">
+<div>
+<h1 class="font-headline text-5xl font-bold tracking-tight text-on-surface">Ekim 2023</h1>
+<p class="text-primary font-medium mt-2">Bugün, 24 Ekim Salı</p>
+</div>
+<button class="bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-3 rounded-xl font-bold flex items-center gap-2 shadow-lg shadow-primary/20 hover:scale-105 transition-transform">
+<span class="material-symbols-outlined" data-icon="add" style="font-variation-settings: 'FILL' 1;">add</span>
+                Yeni Etkinlik
+            </button>
+</div>
+<div class="grid grid-cols-7 gap-px bg-surface-container-highest/20 rounded-2xl overflow-hidden border border-outline-variant/15">
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline text-2xl font-bold text-slate-600">23</span>
+</div>
+</div>
+<div class="bg-surface-container p-4 h-48 group border-2 border-primary/30">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline text-2xl font-bold text-primary">24</span>
+<div class="w-2 h-2 rounded-full bg-primary"></div>
+</div>
+<div class="space-y-1">
+<div class="bg-primary/10 border-l-2 border-primary p-2 rounded text-xs text-primary font-medium">
+                        Editoryal Toplantı
+                    </div>
+</div>
+</div>
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors">
+<div class="flex justify-between items-start mb-2">
+<span class="font-headline text-2xl font-bold text-on-surface/50">25</span>
+</div>
+<div class="bg-tertiary-container/20 border-l-2 border-tertiary p-2 rounded text-xs text-tertiary font-medium">
+                    Lansman Hazırlığı
+                </div>
+</div>
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors"><span class="font-headline text-2xl font-bold text-on-surface/50">26</span></div>
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors"><span class="font-headline text-2xl font-bold text-on-surface/50">27</span></div>
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors"><span class="font-headline text-2xl font-bold text-on-surface/50">28</span></div>
+<div class="bg-surface-container-low p-4 h-48 group hover:bg-surface-container transition-colors"><span class="font-headline text-2xl font-bold text-on-surface/50">29</span></div>
+</div>
+</main>
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-surface-dim/80 backdrop-blur-sm">
+<div class="w-full max-w-xl glass-morphism rounded-[2rem] shadow-[0_32px_64px_-12px_rgba(192,193,255,0.12)] border border-outline-variant/15 p-10 relative overflow-hidden">
+<div class="absolute top-0 right-0 p-8">
+<button class="text-outline hover:text-on-surface transition-colors">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<header class="mb-8">
+<h2 class="font-headline text-3xl font-bold tracking-tight text-on-surface">Yeni Etkinlik Oluştur</h2>
+<p class="text-on-surface-variant font-medium mt-1">Takviminize yeni bir editoryal an ekleyin.</p>
+</header>
+<form class="space-y-6">
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">BAŞLIK</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary transition-all" placeholder="Etkinlik başlığı..." type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">TARİH</label>
+<div class="relative">
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary appearance-none" type="date"/>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="calendar_month">calendar_month</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">BAŞLANGIÇ</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary" type="time"/>
+</div>
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">BİTİŞ</label>
+<input class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary" type="time"/>
+</div>
+</div>
+</div>
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-3">RENK PALETİ</label>
+<div class="flex flex-wrap gap-3">
+<button class="w-8 h-8 rounded-full bg-[#c0c1ff] ring-2 ring-offset-4 ring-offset-surface-container-high ring-primary transition-all scale-110" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-[#ffb783] hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-[#ffb4ab] hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-[#8083ff] hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-[#31394d] hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-[#d97721] hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-emerald-400 hover:scale-110 transition-transform" type="button"></button>
+<button class="w-8 h-8 rounded-full bg-teal-300 hover:scale-110 transition-transform" type="button"></button>
+</div>
+</div>
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">AÇIKLAMA</label>
+<textarea class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface placeholder:text-outline/50 focus:ring-2 focus:ring-primary transition-all resize-none" placeholder="Detaylar buraya..." rows="3"></textarea>
+</div>
+<div>
+<label class="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-outline mb-2">HATIRLATICI TİPİ</label>
+<div class="relative">
+<select class="w-full bg-surface-container-highest border-none rounded-xl px-4 py-3 text-on-surface focus:ring-2 focus:ring-primary appearance-none pr-10">
+<option>15 dakika önce</option>
+<option>30 dakika önce</option>
+<option>1 saat önce</option>
+<option>1 gün önce</option>
+<option>Özel...</option>
+</select>
+<span class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-outline pointer-events-none" data-icon="notifications">notifications</span>
+</div>
+</div>
+<div class="flex gap-4 pt-4">
+<button class="flex-1 px-6 py-4 rounded-xl font-bold text-primary hover:bg-white/5 transition-all text-sm" type="button">Vazgeç</button>
+<button class="flex-[2] bg-gradient-to-br from-primary to-primary-container text-on-primary-container px-6 py-4 rounded-xl font-bold shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all text-sm" type="submit">Kaydet</button>
+</div>
+</form>
+</div>
+</div>
+</body></html>

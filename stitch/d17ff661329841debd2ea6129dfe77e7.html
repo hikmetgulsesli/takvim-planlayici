@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="tr"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-dim": "#0b1326",
+            "surface-container-lowest": "#060e20",
+            "surface-container-low": "#131b2e",
+            "surface-variant": "#2d3449",
+            "on-tertiary-container": "#452000",
+            "secondary-fixed-dim": "#c0c1ff",
+            "outline-variant": "#464554",
+            "surface-tint": "#c0c1ff",
+            "on-secondary-fixed": "#13144a",
+            "error": "#ffb4ab",
+            "on-surface-variant": "#c7c4d7",
+            "surface-container-high": "#222a3d",
+            "surface-container": "#171f33",
+            "surface": "#0b1326",
+            "background": "#0b1326",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "on-error-container": "#ffdad6",
+            "tertiary-container": "#d97721",
+            "surface-bright": "#31394d",
+            "surface-container-highest": "#2d3449",
+            "inverse-primary": "#494bd6",
+            "on-primary-container": "#0d0096",
+            "tertiary-fixed": "#ffdcc5",
+            "primary-fixed": "#e1e0ff",
+            "secondary-fixed": "#e1e0ff",
+            "primary-container": "#8083ff",
+            "on-secondary-fixed-variant": "#404178",
+            "outline": "#908fa0",
+            "on-primary": "#1000a9",
+            "inverse-on-surface": "#283044",
+            "error-container": "#93000a",
+            "primary-fixed-dim": "#c0c1ff",
+            "on-surface": "#dae2fd",
+            "on-primary-fixed": "#07006c",
+            "on-secondary-container": "#b2b3f2",
+            "on-tertiary-fixed-variant": "#703700",
+            "on-error": "#690005",
+            "on-secondary": "#292a60",
+            "tertiary": "#ffb783",
+            "primary": "#c0c1ff",
+            "on-tertiary": "#4f2500",
+            "secondary-container": "#42447b",
+            "on-background": "#dae2fd",
+            "tertiary-fixed-dim": "#ffb783",
+            "secondary": "#c0c1ff",
+            "on-tertiary-fixed": "#301400",
+            "inverse-surface": "#dae2fd"
+          },
+          fontFamily: {
+            "headline": ["Manrope"],
+            "body": ["Inter"],
+            "label": ["Inter"]
+          },
+          borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    body {
+      background-color: #0b1326;
+      color: #dae2fd;
+      font-family: 'Inter', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0b1326;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #2d3449;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="overflow-hidden">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] h-full w-72 transition-all duration-300">
+<div class="mb-10 px-4">
+<h1 class="text-lg font-black text-[#c0c1ff] font-headline">The Curator</h1>
+<p class="text-xs text-slate-500 font-medium tracking-widest mt-1 uppercase">Premium Plan</p>
+</div>
+<button class="mb-8 flex items-center justify-center gap-2 bg-gradient-to-br from-primary to-primary-container text-on-primary-container font-bold py-4 px-6 rounded-xl shadow-lg shadow-primary/10 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">add</span>
+<span>Yeni Etkinlik</span>
+</button>
+<nav class="flex flex-col gap-2 flex-grow">
+<a class="flex items-center gap-3 bg-[#c0c1ff]/10 text-[#c0c1ff] rounded-xl px-4 py-3 font-semibold transition-all duration-200 translate-x-1" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body">Takvimlerim</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-body">Paylaşılanlar</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="check_circle">check_circle</span>
+<span class="font-body">Görevler</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="archive">archive</span>
+<span class="font-body">Arşiv</span>
+</a>
+</nav>
+<div class="mt-auto flex flex-col gap-2 pt-8">
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body">Yardım</span>
+</a>
+<a class="flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-body">Çıkış</span>
+</a>
+<div class="mt-4 px-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center overflow-hidden">
+<img alt="Kullanıcı Profili" class="w-full h-full object-cover" data-alt="close-up portrait of a professional woman with a minimalist modern aesthetic in a soft dark studio lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlrTCWKqLlHzkgJjCeHMyldkP0727FFjpGF-S7S6FRKJxXJ_Aa37Pv45eJosAb7vNjQ7LrD-GHIu6oAo1do1R9kkXpG7NqIIa36oR0oPdUB63UYWe9eD6ydxT9i4sFChUI8HdNV5L42yt4KmXaxiOOXbwP3CXn4RZ1RDwOCpXK9Tr_FJIOoMZJDefus7Ca5olRyzvVDmJD29VwmmYaWlM0xs_xB3YkKOYud106zj2YfYoq0vxrBWJQuYB_ABnEB6_lb0xHdBD2zLUH"/>
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-bold text-on-surface">Selim Can</span>
+<span class="text-[10px] text-slate-500 font-medium">Editor-in-Chief</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-72 min-h-screen flex flex-col relative">
+<!-- TopNavBar -->
+<header class="fixed top-0 left-72 right-0 z-50 flex justify-between items-center px-12 h-24 bg-[#0b1326] tonal transition no-border shadow-[0_8px_32px_rgba(99,102,241,0.08)]">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4">
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all text-slate-400">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<h2 class="font-headline text-2xl font-bold text-on-surface tracking-tight">1-7 Nisan 2026</h2>
+<button class="w-10 h-10 flex items-center justify-center rounded-lg hover:bg-white/5 transition-all text-slate-400">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+<nav class="flex items-center gap-6 ml-4">
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Ay</a>
+<a class="text-[#c0c1ff] border-b-2 border-[#c0c1ff] pb-1 font-headline font-bold text-sm tracking-tight transition-all duration-300" href="#">Hafta</a>
+<a class="text-slate-400 font-medium hover:text-slate-200 font-headline text-sm tracking-tight transition-all duration-300" href="#">Gün</a>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative group">
+<input class="bg-surface-container-highest border-none rounded-xl px-12 py-2 text-sm focus:ring-1 focus:ring-primary w-64 transition-all duration-300 outline-none" placeholder="Takvimde ara..." type="text"/>
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 text-sm">search</span>
+</div>
+<button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-white/5 transition-all text-slate-400">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+</button>
+</div>
+</header>
+<!-- Calendar Viewport -->
+<div class="mt-24 flex flex-col flex-grow overflow-hidden px-8 pb-8">
+<!-- Weekday Headers -->
+<div class="flex ml-20 mb-4">
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1">PAZ</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">1</span>
+</div>
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1">PTESİ</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">2</span>
+</div>
+<div class="flex-1 text-center py-4 bg-primary/5 rounded-2xl">
+<span class="block text-label text-[10px] text-primary font-bold tracking-[0.1em] mb-1">SALI</span>
+<span class="text-3xl font-headline font-black text-primary -mt-1 block">3</span>
+</div>
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1">ÇARŞ</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">4</span>
+</div>
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1">PERŞ</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">5</span>
+</div>
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1 text-tertiary">CUMA</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">6</span>
+</div>
+<div class="flex-1 text-center py-4">
+<span class="block text-label text-[10px] text-slate-500 font-bold tracking-[0.1em] mb-1">CMT</span>
+<span class="text-2xl font-headline font-extrabold text-on-surface">7</span>
+</div>
+</div>
+<!-- Scrollable Grid -->
+<div class="flex-grow overflow-y-auto custom-scrollbar relative pr-4">
+<!-- Timeline Container -->
+<div class="relative min-h-[1200px] flex">
+<!-- Current Time Indicator (Line) -->
+<div class="absolute w-full top-[520px] z-20 flex items-center pointer-events-none">
+<div class="w-20 pr-4 text-right">
+<span class="text-[10px] font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">13:14</span>
+</div>
+<div class="flex-grow h-[2px] bg-primary relative">
+<div class="absolute -left-1 -top-[3px] w-2 h-2 rounded-full bg-primary"></div>
+</div>
+</div>
+<!-- Vertical Time Markers -->
+<div class="w-20 flex flex-col">
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">08:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">09:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">10:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">11:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">12:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">13:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">14:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">15:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">16:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">17:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">18:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">19:00</div>
+<div class="h-[100px] text-right pr-6 text-label text-[11px] font-medium text-slate-500">20:00</div>
+</div>
+<!-- Columns -->
+<div class="flex-grow flex gap-4">
+<!-- Column 1 (PAZ) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+</div>
+<!-- Column 2 (PTESİ) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+<!-- Event Card -->
+<div class="absolute top-[150px] left-2 right-2 h-[150px] bg-secondary-container/80 backdrop-blur-md rounded-xl p-4 border-l-4 border-primary shadow-xl z-10 hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="text-[10px] font-black text-primary uppercase tracking-widest mb-1">09:30 - 11:00</div>
+<h4 class="font-headline font-bold text-sm text-on-secondary-container leading-tight">Haftalık Bülten Planlaması</h4>
+<div class="mt-2 flex -space-x-2">
+<img class="w-6 h-6 rounded-full border-2 border-secondary-container" data-alt="minimalist user avatar circle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF0v9uhxfjPU7aQwgZrYlPtwq-ZudGcV_y9CHrzUbmtEUW6qgZjQtTLPj8sHqS9-lYQwzwGvm8MKd3vvGkAOByOhHAMlUkBRMDjwogzp9VSh_VSmPEvPgbre4z_rNYtd09fBjj-GN3fL8J_K0wE7C5vRAXmSuZhqyTh8ROEiWGdcLaQVSsXq4Q-gFoubictM88VE8XVJoBceK-0NFrYeQF70Xt8I538m4zybbYekcVz4et5UwT1Qzf9v2RdjmmDql76VqY3OShgpfM"/>
+<img class="w-6 h-6 rounded-full border-2 border-secondary-container" data-alt="minimalist user avatar circle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHelV1ns6qLQgdIqauZTkJBbHQrHEfU9MD_ULIGVeehIiiLEOKUyo6BkTSZ1W-0nuM6KdWupnCaeTKl1TCiRc_OhN6dwDhda8EFRAOWAHmAtWFx5IJvYqjoq-lfOu07gg4tikkXG6mHlv4_ZUJpR0-18Mm_4AdnWu_EYDHb64XElDMCE2FBokINIX85kq2PlaVjh66lln9yxYrEmB73gBD0VJbjkFM6bgGRmEYGzSLVJ5pl4MpRFDZxiyflOcKJ3ZjfzHqqcMsGVmr"/>
+</div>
+</div>
+</div>
+<!-- Column 3 (SALI - BUGÜN) -->
+<div class="flex-1 relative bg-primary/5 rounded-2xl border border-primary/10">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div><div class="border-b border-primary/[0.05]"></div>
+</div>
+<!-- Event Card -->
+<div class="absolute top-[400px] left-2 right-2 h-[200px] bg-surface-container-high/90 backdrop-blur-md rounded-xl p-4 border-l-4 border-tertiary shadow-xl z-10 hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="text-[10px] font-black text-tertiary uppercase tracking-widest mb-1">12:00 - 14:00</div>
+<h4 class="font-headline font-bold text-sm text-on-surface leading-tight">Yazar Toplantısı: Yeni Sayı Teması</h4>
+<div class="mt-2 flex items-center gap-2">
+<span class="material-symbols-outlined text-xs text-slate-500">location_on</span>
+<span class="text-[11px] text-slate-400 font-medium">Toplantı Odası B</span>
+</div>
+</div>
+</div>
+<!-- Column 4 (ÇARŞ) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+<!-- Event Card -->
+<div class="absolute top-[800px] left-2 right-2 h-[100px] bg-error-container/60 backdrop-blur-md rounded-xl p-4 border-l-4 border-error shadow-xl z-10 hover:scale-[1.02] transition-transform cursor-pointer">
+<div class="text-[10px] font-black text-error uppercase tracking-widest mb-1">16:00 - 17:00</div>
+<h4 class="font-headline font-bold text-sm text-on-error-container leading-tight">Baskı Onayı</h4>
+</div>
+</div>
+<!-- Column 5 (PERŞ) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+</div>
+<!-- Column 6 (CUMA) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+</div>
+<!-- Column 7 (CMT) -->
+<div class="flex-1 relative bg-surface-container-low/30 rounded-2xl group border border-white/0 hover:border-white/5 transition-all">
+<div class="absolute inset-0 grid grid-rows-[repeat(13,100px)] pointer-events-none">
+<div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div><div class="border-b border-white/[0.03]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Floating Action Button (Alternative Placement) -->
+<button class="fixed bottom-10 right-10 w-16 h-16 bg-surface-variant/60 backdrop-blur-xl border border-white/10 rounded-full flex items-center justify-center text-primary shadow-[0_0_40px_rgba(192,193,255,0.15)] hover:scale-110 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-3xl" style="font-variation-settings: 'wght' 500;">add</span>
+</button>
+</main>
+</body></html>

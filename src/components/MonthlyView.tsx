@@ -1,221 +1,210 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useEventContext } from '../context/EventContext';
-import type { Event } from '../types';
+import type { FC } from 'react';
+import type { CalendarEvent } from '../types/index';
 
 interface MonthlyViewProps {
-  onDayClick?: (date: Date) => void;
-  onEventClick?: (event: Event) => void;
+  date: Date;
+  events: CalendarEvent[];
+  onEventClick: (event: CalendarEvent) => void;
+  onPreviousMonth: () => void;
+  onNextMonth: () => void;
+  onToday: () => void;
 }
 
-const DAYS_OF_WEEK = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+const COLOR_MAP: Record<string, { bg: string; text: string }> = {
+  '#c0c1ff': { bg: 'bg-[#c0c1ff]/20', text: 'text-[#c0c1ff]' },
+  '#ffb783': { bg: 'bg-[#ffb783]/20', text: 'text-[#ffb783]' },
+  '#ffb4ab': { bg: 'bg-[#ffb4ab]/20', text: 'text-[#ffb4ab]' },
+  '#8083ff': { bg: 'bg-[#8083ff]/20', text: 'text-[#8083ff]' },
+  '#31394d': { bg: 'bg-[#31394d]/50', text: 'text-[#dae2fd]' },
+  '#d97721': { bg: 'bg-[#d97721]/20', text: 'text-[#ffb783]' },
+  '#10b981': { bg: 'bg-emerald-400/20', text: 'text-emerald-400' },
+  '#14b8a6': { bg: 'bg-teal-300/20', text: 'text-teal-300' },
+};
 
-const MONTH_NAMES = [
-  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-];
+const getColorClasses = (color: string): { bg: string; text: string } => {
+  return COLOR_MAP[color] ?? { bg: 'bg-[#c0c1ff]/20', text: 'text-[#c0c1ff]' };
+};
 
-export function MonthlyView({ onDayClick, onEventClick }: MonthlyViewProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const { getEventsByDate } = useEventContext();
+const formatTurkishMonth = (date: Date): string => {
+  const months = [
+    'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
+    'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
+  ];
+  return `${months[date.getMonth()]} ${date.getFullYear()}`;
+};
 
-  const today = useMemo(() => new Date(), []);
+const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
-  const year = currentDate.getFullYear();
-  const month = currentDate.getMonth();
+const getDaysInMonth = (year: number, month: number): number => {
+  return new Date(year, month + 1, 0).getDate();
+};
 
-  const monthYearLabel = useMemo(() => {
-    return `${MONTH_NAMES[month]} ${year}`;
-  }, [month, year]);
+const getFirstDayOfMonth = (year: number, month: number): number => {
+  // 0 = Sunday, 1 = Monday, etc. Convert to Monday = 0
+  const day = new Date(year, month, 1).getDay();
+  return day === 0 ? 6 : day - 1;
+};
 
-  const todayLabel = useMemo(() => {
-    const dayNames = ['Pazar', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi'];
-    return `Bugün, ${today.getDate()} ${MONTH_NAMES[today.getMonth()]} ${dayNames[today.getDay()] || 'Pazar'}`;
-  }, [today]);
+const isToday = (date: Date, day: number): boolean => {
+  const today = new Date();
+  return (
+    today.getDate() === day &&
+    today.getMonth() === date.getMonth() &&
+    today.getFullYear() === date.getFullYear()
+  );
+};
 
-  const calendarDays = useMemo(() => {
-    const firstDayOfMonth = new Date(year, month, 1);
-    const lastDayOfMonth = new Date(year, month + 1, 0);
-    const daysInMonth = lastDayOfMonth.getDate();
-    
-    // Get the day of week for the first day (0 = Sunday, 1 = Monday, etc.)
-    let firstDayOfWeek = firstDayOfMonth.getDay();
-    // Convert to Monday-based (0 = Monday, 6 = Sunday)
-    firstDayOfWeek = firstDayOfWeek === 0 ? 6 : firstDayOfWeek - 1;
+const formatDateStr = (date: Date, day: number): string => {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const dayStr = day.toString().padStart(2, '0');
+  return `${year}-${month}-${dayStr}`;
+};
 
-    const days: Array<{ date: number; isCurrentMonth: boolean; fullDate: Date }> = [];
+export const MonthlyView: FC<MonthlyViewProps> = ({
+  date,
+  events,
+  onEventClick,
+  onPreviousMonth,
+  onNextMonth,
+  onToday,
+}) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+  const daysInMonth = getDaysInMonth(year, month);
+  const firstDay = getFirstDayOfMonth(year, month);
 
-    // Previous month days
-    const prevMonthLastDay = new Date(year, month, 0).getDate();
-    for (let i = firstDayOfWeek - 1; i >= 0; i--) {
-      const date = prevMonthLastDay - i;
-      days.push({
-        date,
-        isCurrentMonth: false,
-        fullDate: new Date(year, month - 1, date)
-      });
-    }
+  const days: Array<{ day: number | null; dateStr: string | null }> = [];
+  
+  // Empty cells for days before the first day of the month
+  for (let i = 0; i < firstDay; i++) {
+    days.push({ day: null, dateStr: null });
+  }
+  
+  // Days of the month
+  for (let day = 1; day <= daysInMonth; day++) {
+    days.push({ day, dateStr: formatDateStr(date, day) });
+  }
 
-    // Current month days
-    for (let i = 1; i <= daysInMonth; i++) {
-      days.push({
-        date: i,
-        isCurrentMonth: true,
-        fullDate: new Date(year, month, i)
-      });
-    }
-
-    // Next month days to fill 6 rows (42 cells)
-    const remainingCells = 42 - days.length;
-    for (let i = 1; i <= remainingCells; i++) {
-      days.push({
-        date: i,
-        isCurrentMonth: false,
-        fullDate: new Date(year, month + 1, i)
-      });
-    }
-
-    return days;
-  }, [year, month]);
-
-  const navigatePreviousMonth = useCallback(() => {
-    setCurrentDate(new Date(year, month - 1, 1));
-  }, [year, month]);
-
-  const navigateNextMonth = useCallback(() => {
-    setCurrentDate(new Date(year, month + 1, 1));
-  }, [year, month]);
-
-  const navigateToToday = useCallback(() => {
-    setCurrentDate(new Date());
-  }, []);
-
-  const isToday = useCallback((date: Date): boolean => {
-    return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
-    );
-  }, [today]);
-
-  const formatDateKey = useCallback((date: Date): string => {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
-  }, []);
-
-  const handleDayClick = useCallback((fullDate: Date) => {
-    onDayClick?.(fullDate);
-  }, [onDayClick]);
-
-  const handleEventClick = useCallback((e: React.MouseEvent, event: Event) => {
-    e.stopPropagation();
-    onEventClick?.(event);
-  }, [onEventClick]);
+  const getEventsForDay = (dateStr: string | null): CalendarEvent[] => {
+    if (!dateStr) return [];
+    return events.filter((e) => e.date === dateStr);
+  };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="animate-fade-in">
       {/* Header */}
-      <div className="mb-8 flex justify-between items-end">
-        <div>
-          <h1 className="font-headline text-5xl font-bold tracking-tight text-on-surface">
-            {monthYearLabel}
-          </h1>
-          <p className="text-primary font-medium mt-2">{todayLabel}</p>
-        </div>
-        <div className="flex items-center gap-4">
-          {/* Navigation Arrows */}
-          <div className="flex items-center gap-2">
-            <button
-              onClick={navigatePreviousMonth}
-              className="p-2 text-primary hover:bg-white/5 rounded-xl transition-all duration-300"
-              aria-label="Önceki ay"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button
-              onClick={navigateToToday}
-              className="px-4 py-2 text-primary font-semibold hover:bg-white/5 rounded-xl transition-all duration-300"
-            >
-              Bugün
-            </button>
-            <button
-              onClick={navigateNextMonth}
-              className="p-2 text-primary hover:bg-white/5 rounded-xl transition-all duration-300"
-              aria-label="Sonraki ay"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-headline font-bold text-[var(--color-on-surface)]">
+          {formatTurkishMonth(date)}
+        </h2>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onPreviousMonth}
+            className="p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200"
+            aria-label="Önceki ay"
+          >
+            <span className="material-symbols-outlined">chevron_left</span>
+          </button>
+          <button
+            onClick={onToday}
+            className="px-4 py-2 rounded-lg text-[var(--color-on-surface)] bg-[var(--color-surface-container)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200 font-medium"
+          >
+            Bugün
+          </button>
+          <button
+            onClick={onNextMonth}
+            className="p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200"
+            aria-label="Sonraki ay"
+          >
+            <span className="material-symbols-outlined">chevron_right</span>
+          </button>
         </div>
       </div>
 
-      {/* Calendar Grid */}
-      <div className="grid grid-cols-7 gap-px bg-surface-container-highest/20 rounded-2xl overflow-hidden border border-outline-variant/15">
-        {/* Day Headers */}
-        {DAYS_OF_WEEK.map((day) => (
-          <div key={day} className="bg-surface-container-high p-4 text-center">
-            <span className="font-headline font-bold text-sm text-on-surface-variant">{day}</span>
+      {/* Empty state for no events in the entire calendar */}
+      {events.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 px-8 text-center mb-8">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 blur-[60px] bg-[var(--color-primary)]/10 rounded-full scale-150"></div>
+            <div className="relative w-32 h-32 flex items-center justify-center rounded-full border border-[var(--color-primary)]/20 glass-morphism">
+              <span className="material-symbols-outlined text-6xl text-[var(--color-primary)]" style={{ textShadow: '0 0 15px rgba(168, 232, 255, 0.4)' }}>
+                calendar_month
+              </span>
+            </div>
+          </div>
+          <h3 className="font-headline text-2xl font-bold text-[var(--color-on-surface)] mb-3">
+            Henüz etkinlik yok
+          </h3>
+          <p className="text-[var(--color-on-surface-variant)] max-w-sm mb-8 leading-relaxed">
+            Henüz etkinlik eklemediniz. Yeni etkinlik eklemek için + butonuna tıklayın.
+          </p>
+        </div>
+      )}
+
+      {/* Calendar grid */}
+      <div className="grid grid-cols-7 gap-1">
+        {/* Day headers */}
+        {DAYS.map((day) => (
+          <div
+            key={day}
+            className="py-2 text-center text-sm font-medium text-[var(--color-on-surface-variant)]"
+          >
+            {day}
           </div>
         ))}
 
-        {/* Calendar Days */}
-        {calendarDays.map((day, index) => {
-          const dateKey = formatDateKey(day.fullDate);
-          const dayEvents = getEventsByDate(dateKey);
-          const todayFlag = isToday(day.fullDate);
-          const maxVisibleEvents = 3;
-          const visibleEvents = dayEvents.slice(0, maxVisibleEvents);
-          const overflowCount = dayEvents.length - maxVisibleEvents;
+        {/* Calendar days */}
+        {days.map((dayInfo, index) => {
+          const dayEvents = getEventsForDay(dayInfo.dateStr);
+          const isTodayDate = dayInfo.day !== null && isToday(date, dayInfo.day);
 
           return (
             <div
               key={index}
-              onClick={() => handleDayClick(day.fullDate)}
               className={`
-                bg-surface-container-low p-4 h-48 group transition-colors cursor-pointer
-                ${day.isCurrentMonth ? 'hover:bg-surface-container' : 'opacity-40'}
-                ${todayFlag ? 'border-2 border-primary/30 bg-surface-container' : ''}
+                min-h-[100px] p-2 border border-[var(--color-outline-variant)]/10 rounded-lg
+                ${dayInfo.day !== null ? 'bg-[var(--color-surface-container)] hover:bg-[var(--color-surface-container-high)]' : ''}
+                transition-all duration-200
               `}
             >
-              <div className="flex justify-between items-start mb-2">
-                <span
-                  className={`font-headline text-2xl font-bold ${
-                    todayFlag ? 'text-primary' : day.isCurrentMonth ? 'text-slate-600' : 'text-slate-600/50'
-                  }`}
-                >
-                  {day.date}
-                </span>
-                {todayFlag && <div className="w-2 h-2 rounded-full bg-primary"></div>}
-              </div>
-
-              {/* Events */}
-              <div className="space-y-1">
-                {visibleEvents.map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={(e) => handleEventClick(e, event)}
-                    className="text-xs font-medium truncate px-2 py-1 rounded border-l-2 cursor-pointer hover:brightness-110 transition-all"
-                    style={{
-                      backgroundColor: `${event.color}20`,
-                      borderLeftColor: event.color,
-                      color: event.color
-                    }}
-                    title={event.title}
-                  >
-                    {event.title}
+              {dayInfo.day !== null && (
+                <>
+                  <div className={`
+                    w-7 h-7 flex items-center justify-center rounded-full text-sm font-medium mb-1
+                    ${isTodayDate ? 'bg-[var(--color-primary)] text-[var(--color-on-primary)]' : 'text-[var(--color-on-surface)]'}
+                  `}>
+                    {dayInfo.day}
                   </div>
-                ))}
-                {overflowCount > 0 && (
-                  <div className="text-xs text-on-surface-variant px-2 py-1">
-                    +{overflowCount} etkinlik
+                  <div className="space-y-1">
+                    {dayEvents.slice(0, 3).map((event) => {
+                      const colorClasses = getColorClasses(event.color);
+                      return (
+                        <button
+                          key={event.id}
+                          onClick={() => onEventClick(event)}
+                          className={`
+                            w-full text-left text-xs px-2 py-1 rounded truncate
+                            ${colorClasses.bg} ${colorClasses.text}
+                            hover:brightness-110 transition-all duration-200
+                          `}
+                        >
+                          {event.title}
+                        </button>
+                      );
+                    })}
+                    {dayEvents.length > 3 && (
+                      <div className="text-xs text-[var(--color-on-surface-variant)] px-2">
+                        +{dayEvents.length - 3} daha
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
+                </>
+              )}
             </div>
           );
         })}
       </div>
     </div>
   );
-}
+};

@@ -1,85 +1,107 @@
-import { createContext, useContext, useState, useCallback, type ReactNode } from 'react';
-import type { Event } from '../types';
+import type { ReactNode } from 'react';
+import { createContext, useContext, useState, useCallback } from 'react';
+import type { CalendarEvent, EventFormData } from '../types';
 
 interface EventContextType {
-  events: Event[];
-  addEvent: (event: Event) => void;
-  updateEvent: (event: Event) => void;
+  events: CalendarEvent[];
+  createEvent: (data: EventFormData) => CalendarEvent;
+  updateEvent: (id: string, data: Partial<EventFormData>) => void;
   deleteEvent: (id: string) => void;
-  getEventsByDate: (date: string) => Event[];
-  getEventsByMonth: (year: number, month: number) => Event[];
+  getEventsByDate: (date: string) => CalendarEvent[];
+  getEventById: (id: string) => CalendarEvent | undefined;
 }
 
-const EventContext = createContext<EventContextType | undefined>(undefined);
+const EventContext = createContext<EventContextType | null>(null);
 
-const STORAGE_KEY = 'chronos_events';
+const STORAGE_KEY = 'takvim-events';
 
-export function EventProvider({ children }: { children: ReactNode }) {
-  const [events, setEvents] = useState<Event[]>(() => {
-    try {
+interface EventProviderProps {
+  children: ReactNode;
+}
+
+export function EventProvider({ children }: EventProviderProps) {
+  const [events, setEvents] = useState<CalendarEvent[]>(() => {
+    if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(STORAGE_KEY);
-      return stored ? JSON.parse(stored) : [];
-    } catch {
-      return [];
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch {
+          return [];
+        }
+      }
     }
+    return [];
   });
 
-  const saveEvents = useCallback((newEvents: Event[]) => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(newEvents));
-    } catch {
-      // Storage error
-    }
+  const createEvent = useCallback((data: EventFormData): CalendarEvent => {
+    const newEvent: CalendarEvent = {
+      id: crypto.randomUUID(),
+      ...data,
+    };
+    setEvents((prev) => {
+      const updated = [...prev, newEvent];
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
+    });
+    return newEvent;
   }, []);
 
-  const addEvent = useCallback((event: Event) => {
+  const updateEvent = useCallback((id: string, data: Partial<EventFormData>) => {
     setEvents((prev) => {
-      const newEvents = [...prev, event];
-      saveEvents(newEvents);
-      return newEvents;
+      const updated = prev.map((event) => {
+        if (event.id === id) {
+          return { ...event, ...data };
+        }
+        return event;
+      });
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
     });
-  }, [saveEvents]);
-
-  const updateEvent = useCallback((event: Event) => {
-    setEvents((prev) => {
-      const newEvents = prev.map((e) => (e.id === event.id ? event : e));
-      saveEvents(newEvents);
-      return newEvents;
-    });
-  }, [saveEvents]);
+  }, []);
 
   const deleteEvent = useCallback((id: string) => {
     setEvents((prev) => {
-      const newEvents = prev.filter((e) => e.id !== id);
-      saveEvents(newEvents);
-      return newEvents;
+      const updated = prev.filter((event) => event.id !== id);
+      if (typeof window !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+      }
+      return updated;
     });
-  }, [saveEvents]);
+  }, []);
 
-  const getEventsByDate = useCallback((date: string): Event[] => {
-    return events.filter((e) => e.date === date);
+  const getEventsByDate = useCallback((date: string) => {
+    return events.filter((event) => event.date === date);
   }, [events]);
 
-  const getEventsByMonth = useCallback((year: number, month: number): Event[] => {
-    return events.filter((e) => {
-      const eventDate = new Date(e.date);
-      return eventDate.getFullYear() === year && eventDate.getMonth() === month;
-    });
+  const getEventById = useCallback((id: string) => {
+    return events.find((event) => event.id === id);
   }, [events]);
+
+  const value: EventContextType = {
+    events,
+    createEvent,
+    updateEvent,
+    deleteEvent,
+    getEventsByDate,
+    getEventById,
+  };
 
   return (
-    <EventContext.Provider
-      value={{ events, addEvent, updateEvent, deleteEvent, getEventsByDate, getEventsByMonth }}
-    >
+    <EventContext.Provider value={value}>
       {children}
     </EventContext.Provider>
   );
 }
 
-export function useEventContext() {
+export function useEvents(): EventContextType {
   const context = useContext(EventContext);
-  if (!context) {
-    throw new Error('useEventContext must be used within EventProvider');
+  if (context === null) {
+    throw new Error('useEvents must be used within an EventProvider');
   }
   return context;
 }

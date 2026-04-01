@@ -1,5 +1,17 @@
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { CalendarPage } from './pages/CalendarPage';
+import { SettingsPage } from './pages/SettingsPage';
+
 function App() {
-  return <div className="p-4">Takvim Planlayıcı</div>
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<CalendarPage />} />
+        <Route path="/ayarlar" element={<SettingsPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

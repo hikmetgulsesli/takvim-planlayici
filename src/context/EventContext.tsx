@@ -37,16 +37,15 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
 
   const invalidateNotifications = useCallback((eventId: string) => {
     if (typeof window === 'undefined') return;
-    
-    const stored = localStorage.getItem(NOTIFICATION_KEY);
-    if (stored) {
-      try {
+    try {
+      const stored = localStorage.getItem(NOTIFICATION_KEY);
+      if (stored) {
         const notifications = JSON.parse(stored);
         delete notifications[eventId];
         localStorage.setItem(NOTIFICATION_KEY, JSON.stringify(notifications));
-      } catch {
-        // Ignore parse errors
       }
+    } catch {
+      // Ignore storage errors to keep the UI responsive
     }
   }, []);
 

@@ -128,7 +128,7 @@ function AppContent() {
   const handleTimeSlotClick = useCallback((date: string, time: string) => {
     const [hoursStr] = time.split(':');
     const hours = parseInt(hoursStr ?? '0', 10);
-    const endHour = Math.min(hours + 1, 23);
+    const endHour = hours === 23 ? 23 : hours + 1;
     const endTime = `${endHour.toString().padStart(2, '0')}:00`;
     
     setFormInitialData({
@@ -193,15 +193,31 @@ function AppContent() {
 
   // Get filtered events for daily view (apply date range filter)
   const filteredTodaysEvents = useMemo(() => {
-    if (!searchQuery.trim() && !startDate && !endDate) {
+    const trimmedSearch = searchQuery.trim().toLowerCase();
+
+    // If no filters are active, return all events for today
+    if (!trimmedSearch && !startDate && !endDate) {
       return todaysEvents;
     }
+
+    // Apply date range filter to the current day so day view
+    // respects the same AND logic as week/month views.
+    const currentDateStr = currentDate.toISOString().split('T')[0]?.split('T')[0] ?? '';
+    const isDayWithinRange =
+      (!startDate || currentDateStr >= startDate) &&
+      (!endDate || currentDateStr <= endDate);
+
+    if (!isDayWithinRange) {
+      return [];
+    }
+
     return todaysEvents.filter((event) => {
-      const matchesSearch = searchQuery.trim() === '' || 
-        event.title.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch =
+        !trimmedSearch ||
+        event.title.toLowerCase().includes(trimmedSearch);
       return matchesSearch;
     });
-  }, [todaysEvents, searchQuery, startDate, endDate]);
+  }, [todaysEvents, searchQuery, startDate, endDate, currentDate]);
 
   return (
     <div className="min-h-screen bg-[#0b1326]">
@@ -296,6 +312,7 @@ function AppContent() {
       </main>
 
       <EventFormModal
+        key={isFormOpen ? (selectedEvent?.id ?? 'new') : 'closed'}
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}

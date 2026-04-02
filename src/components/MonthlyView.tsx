@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type DragEvent } from 'react';
 import type { CalendarEvent } from '../types';
 
 interface MonthlyViewProps {
@@ -24,6 +24,13 @@ const COLOR_MAP: Record<string, { bg: string; border: string; text: string }> = 
 
 const getColorClasses = (color: string): { bg: string; border: string; text: string } => {
   return COLOR_MAP[color] ?? { bg: 'bg-[#c0c1ff]/20', border: 'border-[#c0c1ff]', text: 'text-[#c0c1ff]' };
+};
+
+const formatLocalDate = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
 
 const MONTHS = [
@@ -74,14 +81,14 @@ export function MonthlyView({
   // Previous month days
   for (let i = startOffset - 1; i >= 0; i--) {
     const d = new Date(year, month - 1, daysInPrevMonth - i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(d);
     calendarDays.push({ date: d, dateStr: dateStr ?? '', isCurrentMonth: false });
   }
   
   // Current month days
   for (let i = 1; i <= daysInMonth; i++) {
     const d = new Date(year, month, i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(d);
     calendarDays.push({ date: d, dateStr: dateStr ?? '', isCurrentMonth: true });
   }
   
@@ -89,7 +96,7 @@ export function MonthlyView({
   const remainingCells = 42 - calendarDays.length;
   for (let i = 1; i <= remainingCells; i++) {
     const d = new Date(year, month + 1, i);
-    const dateStr = d.toISOString().split('T')[0];
+    const dateStr = formatLocalDate(d);
     calendarDays.push({ date: d, dateStr: dateStr ?? '', isCurrentMonth: false });
   }
 
@@ -97,7 +104,7 @@ export function MonthlyView({
     return events.filter((event) => event.date === dateStr);
   }, [events]);
 
-  const handleDragStart = (e: React.DragEvent, eventId: string) => {
+  const handleDragStart = (e: DragEvent, eventId: string) => {
     setDraggedEventId(eventId);
     e.dataTransfer.effectAllowed = 'move';
     // Set drag image offset
@@ -109,7 +116,7 @@ export function MonthlyView({
     setDragOverDate(null);
   };
 
-  const handleDragOver = (e: React.DragEvent, dateStr: string) => {
+  const handleDragOver = (e: DragEvent, dateStr: string) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverDate(dateStr);
@@ -119,7 +126,7 @@ export function MonthlyView({
     setDragOverDate(null);
   };
 
-  const handleDrop = (e: React.DragEvent, dateStr: string) => {
+  const handleDrop = (e: DragEvent, dateStr: string) => {
     e.preventDefault();
     const eventId = e.dataTransfer.getData('text/plain');
     if (eventId && eventId !== draggedEventId) {

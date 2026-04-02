@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type DragEvent } from 'react';
 import type { CalendarEvent } from '../types';
 
 interface DailyViewProps {
@@ -49,7 +49,10 @@ const formatTurkishDate = (date: Date): string => {
 };
 
 const formatShortDate = (date: Date): string => {
-  return date.toISOString().split('T')[0] ?? '';
+  const y = date.getFullYear();
+  const m = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
 
 const isToday = (date: Date): boolean => {
@@ -100,7 +103,7 @@ export function DailyView({
     onTimeSlotClick(formatShortDate(date), timeString);
   };
 
-  const handleDragStart = (e: React.DragEvent, eventId: string) => {
+  const handleDragStart = (e: DragEvent, eventId: string) => {
     setDraggedEventId(eventId);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', eventId);
@@ -111,7 +114,7 @@ export function DailyView({
     setDragOverHour(null);
   };
 
-  const handleDragOver = (e: React.DragEvent, hour: number) => {
+  const handleDragOver = (e: DragEvent, hour: number) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverHour(hour);
@@ -121,7 +124,7 @@ export function DailyView({
     setDragOverHour(null);
   };
 
-  const handleDrop = (e: React.DragEvent, hour: number) => {
+  const handleDrop = (e: DragEvent, hour: number) => {
     e.preventDefault();
     const eventId = e.dataTransfer.getData('text/plain');
     if (eventId && onEventDrop) {

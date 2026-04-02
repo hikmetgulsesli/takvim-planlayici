@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import type { CalendarEvent } from '../types';
 
 interface SearchBarProps {
@@ -46,29 +46,33 @@ export function SearchBar({
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Filter events based on search query and date range
-  const filteredEvents = events.filter((event) => {
-    // Search filter (case-insensitive partial match)
-    const matchesSearch = searchQuery.trim() === '' || 
-      event.title.toLowerCase().includes(searchQuery.toLowerCase());
-    
-    // Date range filter
-    let matchesDateRange = true;
-    if (startDate && event.date < startDate) {
-      matchesDateRange = false;
-    }
-    if (endDate && event.date > endDate) {
-      matchesDateRange = false;
-    }
-    
-    return matchesSearch && matchesDateRange;
-  });
+  const filteredEvents = useMemo(() => {
+    return events.filter((event) => {
+      // Search filter (case-insensitive partial match)
+      const matchesSearch = searchQuery.trim() === '' || 
+        event.title.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      // Date range filter
+      let matchesDateRange = true;
+      if (startDate && event.date < startDate) {
+        matchesDateRange = false;
+      }
+      if (endDate && event.date > endDate) {
+        matchesDateRange = false;
+      }
+      
+      return matchesSearch && matchesDateRange;
+    });
+  }, [events, searchQuery, startDate, endDate]);
 
   // Sort by date
-  const sortedEvents = [...filteredEvents].sort((a, b) => {
-    const dateCompare = a.date.localeCompare(b.date);
-    if (dateCompare !== 0) return dateCompare;
-    return a.startTime.localeCompare(b.startTime);
-  });
+  const sortedEvents = useMemo(() => {
+    return [...filteredEvents].sort((a, b) => {
+      const dateCompare = a.date.localeCompare(b.date);
+      if (dateCompare !== 0) return dateCompare;
+      return a.startTime.localeCompare(b.startTime);
+    });
+  }, [filteredEvents]);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     onSearchChange(e.target.value);
@@ -99,17 +103,20 @@ export function SearchBar({
     setIsFilterOpen(false);
   }, [onClearFilters]);
 
-  // Close dropdown when clicking outside
+  // Close dropdowns when clicking outside
   useEffect(() => {
+    if (!isDropdownOpen && !isFilterOpen) return;
+
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+        setIsFilterOpen(false);
       }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  }, [isDropdownOpen, isFilterOpen]);
 
   const hasActiveFilters = searchQuery.trim() !== '' || startDate !== '' || endDate !== '';
 
@@ -184,10 +191,11 @@ export function SearchBar({
           
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-2 uppercase tracking-wider">
+              <label htmlFor="start-date-input" className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-2 uppercase tracking-wider">
                 Başlangıç Tarihi
               </label>
               <input
+                id="start-date-input"
                 type="date"
                 value={startDate}
                 onChange={(e) => onStartDateChange(e.target.value)}
@@ -196,10 +204,11 @@ export function SearchBar({
             </div>
             
             <div>
-              <label className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-2 uppercase tracking-wider">
+              <label htmlFor="end-date-input" className="block text-xs font-medium text-[var(--color-on-surface-variant)] mb-2 uppercase tracking-wider">
                 Bitiş Tarihi
               </label>
               <input
+                id="end-date-input"
                 type="date"
                 value={endDate}
                 onChange={(e) => onEndDateChange(e.target.value)}

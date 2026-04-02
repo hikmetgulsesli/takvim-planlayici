@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, type DragEvent } from 'react';
 import type { CalendarEvent } from '../types';
 
 interface WeeklyViewProps {
@@ -31,6 +31,13 @@ const getColorClasses = (color: string): { bg: string; border: string; text: str
 
 const formatHour = (hour: number): string => {
   return `${hour.toString().padStart(2, '0')}:00`;
+};
+
+const formatLocalDate = (d: Date): string => {
+  const y = d.getFullYear();
+  const m = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${day}`;
 };
 
 const MONTHS = [
@@ -96,7 +103,7 @@ export function WeeklyView({
     return events.filter((event) => event.date === dateStr);
   }, [events]);
 
-  const handleDragStart = (e: React.DragEvent, eventId: string) => {
+  const handleDragStart = (e: DragEvent, eventId: string) => {
     setDraggedEventId(eventId);
     e.dataTransfer.effectAllowed = 'move';
     e.dataTransfer.setData('text/plain', eventId);
@@ -107,7 +114,7 @@ export function WeeklyView({
     setDragOverSlot(null);
   };
 
-  const handleDragOver = (e: React.DragEvent, dateStr: string, hour: number) => {
+  const handleDragOver = (e: DragEvent, dateStr: string, hour: number) => {
     e.preventDefault();
     e.dataTransfer.dropEffect = 'move';
     setDragOverSlot({ date: dateStr, hour });
@@ -117,7 +124,7 @@ export function WeeklyView({
     setDragOverSlot(null);
   };
 
-  const handleDrop = (e: React.DragEvent, dateStr: string, hour: number) => {
+  const handleDrop = (e: DragEvent, dateStr: string, hour: number) => {
     e.preventDefault();
     const eventId = e.dataTransfer.getData('text/plain');
     if (eventId) {
@@ -210,7 +217,7 @@ export function WeeklyView({
                 
                 {/* Day Columns */}
                 {weekDays.map((day, dayIndex) => {
-                  const dateStr = day.toISOString().split('T')[0] ?? '';
+                  const dateStr = formatLocalDate(day);
                   const isDragOver = dragOverSlot?.date === dateStr && dragOverSlot?.hour === hour;
                   
                   return (
@@ -233,7 +240,7 @@ export function WeeklyView({
 
             {/* Events Overlay */}
             {weekDays.map((day, dayIndex) => {
-              const dateStr = day.toISOString().split('T')[0] ?? '';
+              const dateStr = formatLocalDate(day);
               const dayEvents = getEventsForDate(dateStr);
               
               return dayEvents.map((event) => {

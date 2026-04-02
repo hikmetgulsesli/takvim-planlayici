@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 interface Toast {
   id: string;
@@ -46,15 +46,28 @@ export function ToastContainer() {
     setToasts((prev) => prev.filter((t) => t.id !== id));
   }, []);
 
+  const timeoutsRef = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+
   const addToast = useCallback((message: string, type: 'success' | 'error' | 'info' = 'info') => {
     const id = crypto.randomUUID();
     setToasts((prev) => [...prev, { id, message, type }]);
     
     // Auto-dismiss after 3 seconds
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       removeToast(id);
+      timeoutsRef.current.delete(id);
     }, 3000);
+    timeoutsRef.current.set(id, timeoutId);
   }, [removeToast]);
+
+  // Cleanup timeouts on unmount
+  useEffect(() => {
+    const timeouts = timeoutsRef.current;
+    return () => {
+      timeouts.forEach((timeoutId) => clearTimeout(timeoutId));
+      timeouts.clear();
+    };
+  }, []);
 
   useEffect(() => {
     setToastHandler(addToast);
@@ -64,7 +77,7 @@ export function ToastContainer() {
   }, [addToast]);
 
   return (
-    <div className="toast-container">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col gap-3 items-end">
       {toasts.map((toast) => {
         const styles = TYPE_STYLES[toast.type];
         return (
@@ -73,7 +86,7 @@ export function ToastContainer() {
             className={`
               flex items-center gap-3 px-4 py-3 rounded-lg min-w-[300px]
               ${styles.bg} border ${styles.border}
-              animate-slide-in-right
+              transition-all duration-300 ease-out
             `}
           >
             <span className={`material-symbols-outlined ${styles.text}`}>{styles.icon}</span>

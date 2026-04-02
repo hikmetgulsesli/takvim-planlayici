@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import type { EventFormData, CalendarEvent } from '../types/index';
-import { showToast } from './common/Toast';
+import { showToast } from './Toast';
 
 interface EventFormModalProps {
   isOpen: boolean;

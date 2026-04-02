@@ -25,7 +25,17 @@ const getColorClasses = (color: string): { bg: string; border: string; text: str
 };
 
 const formatTurkishDate = (dateStr: string): string => {
-  const date = new Date(dateStr);
+  // Parse YYYY-MM-DD as local date to avoid UTC offset issues
+  let date: Date;
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) {
+    const [yearStr, monthStr, dayStr] = dateStr.split('-');
+    const year = Number(yearStr);
+    const monthIndex = Number(monthStr) - 1;
+    const dayNum = Number(dayStr);
+    date = new Date(year, monthIndex, dayNum);
+  } else {
+    date = new Date(dateStr);
+  }
   const months = [
     'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
     'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'

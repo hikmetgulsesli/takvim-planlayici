@@ -12,7 +12,7 @@ import { EmptyState } from './components/EmptyState';
 import type { ViewMode, CalendarEvent, EventFormData } from './types';
 import './index.css';
 
-function AppContent() {
+function CalendarPage() {
   const [currentView, setCurrentView] = useState<ViewMode>('day');
   const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -90,8 +90,13 @@ function AppContent() {
   const handleTimeSlotClick = useCallback((date: string, time: string) => {
     const [hoursStr] = time.split(':');
     const hours = parseInt(hoursStr ?? '0', 10);
-    const endHour = Math.min(hours + 1, 23);
-    const endTime = `${endHour.toString().padStart(2, '0')}:00`;
+    let endTime: string;
+    if (hours >= 23) {
+      endTime = '23:59';
+    } else {
+      const endHour = hours + 1;
+      endTime = `${endHour.toString().padStart(2, '0')}:00`;
+    }
     
     setFormInitialData({
       date,
@@ -149,7 +154,12 @@ function AppContent() {
     setShowSearchResults(query.trim() !== '');
   }, []);
 
-  const currentDateStr = currentDate.toISOString().split('T')[0] ?? '';
+  const currentDateStr = useMemo(() => {
+    const year = currentDate.getFullYear();
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const day = String(currentDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }, [currentDate]);
   const todaysEvents = getEventsByDate(currentDateStr);
 
   // Get filtered events for the current view

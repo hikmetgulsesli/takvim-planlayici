@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { removeToast } from '../hooks/useToast';
+import { useCallback, useState } from 'react';
+import { removeToast, useToast } from '../hooks';
 import type { Toast } from '../types';
 
 interface ToastItemProps {
@@ -47,9 +47,6 @@ function ToastItem({ toast }: ToastItemProps) {
     </div>
   );
 }
-
-import { useState } from 'react';
-import { useToast } from '../hooks';
 
 export function ToastContainer() {
   const toasts = useToast();

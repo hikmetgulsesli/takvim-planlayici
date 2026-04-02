@@ -5,15 +5,9 @@ export function NotFoundPage() {
     <main className="relative min-h-screen w-full flex flex-col items-center justify-center overflow-hidden px-6">
       {/* Abstract Background */}
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] opacity-20">
-          <img
-            alt="abstract space"
-            className="w-full h-full object-cover"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMEG_hUOv2LxJ-JzHsvdcgQz5lWTLLEDMr-lhgrYsa5wzoJYiQgeOaZuVfOoRueeOFCeVM97Xd0JGxRiPY0UhpcsdHfD2Gco9QeAbIFL6FZBiu1tXnQqC4j8zy0ol-0dKnB2qILz2o4sIOLXyeXi1et87dnt1des5eLCHfjXl2lU0TFE72oNjb2AHtvp5KbID-v9UZlfi7ThMTcN3XsTtAHDodalYr9L6i7hTjuYte1Iq_R4THsfZ33KIHp424-lgxA_yb9-rvCABN"
-          />
-        </div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 blur-[128px] rounded-full"></div>
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-tertiary/10 blur-[128px] rounded-full"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-gradient-radial from-primary/10 to-transparent opacity-30"></div>
       </div>
 
       {/* 404 Content */}
@@ -26,7 +20,7 @@ export function NotFoundPage() {
           <span className="font-headline font-extrabold text-[12rem] md:text-[18rem] leading-none text-surface-bright/20 select-none tracking-tighter">404</span>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="glass-card p-12 rounded-[2rem] shadow-[0_32px_64px_rgba(99,102,241,0.12)] border border-outline-variant/15">
-              <h2 className="font-headline font-bold text-3xl md:text-4xl text-on-surface mb-4">Aradığınız sayfa bulunamadı</h2>
+              <h2 className="font-headline font-bold text-3xl md:text-4xl text-on-surface mb-4">Sayfa bulunamadı</h2>
               <p className="font-body text-on-surface-variant text-lg max-w-md mx-auto leading-relaxed">
                 Zaman çizelgesinde bir sapma yaşandı. İstediğiniz sayfa arşivlerde yok veya taşınmış olabilir.
               </p>

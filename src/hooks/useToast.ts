@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useSyncExternalStore } from 'react';
 import type { Toast, ToastType } from '../types';
 
-let toastListeners: ((toasts: Toast[]) => void)[] = [];
+let toastListeners: (() => void)[] = [];
 let toasts: Toast[] = [];
 
 function notifyListeners() {
-  toastListeners.forEach((listener) => listener([...toasts]));
+  toastListeners.forEach((listener) => listener());
 }
 
 export function showToast(message: string, type: ToastType = 'info', duration: number = 3000) {
@@ -25,21 +25,23 @@ export function removeToast(id: string) {
   notifyListeners();
 }
 
+function getSnapshot(): Toast[] {
+  return [...toasts];
+}
+
+function getServerSnapshot(): Toast[] {
+  return [];
+}
+
 export function useToast() {
-  const [localToasts, setLocalToasts] = useState<Toast[]>([]);
-
-  useEffect(() => {
-    const listener = (newToasts: Toast[]) => {
-      setLocalToasts(newToasts);
-    };
-    toastListeners.push(listener);
-    Promise.resolve().then(() => {
-      setLocalToasts([...toasts]);
-    });
-    return () => {
-      toastListeners = toastListeners.filter((l) => l !== listener);
-    };
-  }, []);
-
-  return localToasts;
+  return useSyncExternalStore(
+    (callback) => {
+      toastListeners.push(callback);
+      return () => {
+        toastListeners = toastListeners.filter((l) => l !== callback);
+      };
+    },
+    getSnapshot,
+    getServerSnapshot
+  );
 }

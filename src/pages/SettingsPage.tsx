@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, type ChangeEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { useNotifications, useEvents, showToast } from '../hooks';
 import type { Event } from '../types';
@@ -17,7 +17,7 @@ export function SettingsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `events-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `events.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -29,7 +29,7 @@ export function SettingsPage() {
     fileInputRef.current?.click();
   }, []);
 
-  const handleFileChange = useCallback(async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback(async (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -70,11 +70,18 @@ export function SettingsPage() {
       };
 
       const validEvents: Event[] = [];
+      let invalidCount = 0;
 
       for (const item of parsed) {
         if (isValidEvent(item)) {
           validEvents.push(item);
+        } else {
+          invalidCount++;
         }
+      }
+
+      if (invalidCount > 0) {
+        showToast(`${invalidCount} geçersiz öğe içe aktarma sırasında atlandı`, 'warning');
       }
 
       if (validEvents.length === 0) {

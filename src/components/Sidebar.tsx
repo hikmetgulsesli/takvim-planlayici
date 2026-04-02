@@ -1,4 +1,4 @@
-
+import type { FC } from 'react';
 import type { ViewMode } from '../types';
 
 interface SidebarProps {
@@ -7,90 +7,52 @@ interface SidebarProps {
   onCreateEvent: () => void;
 }
 
-export function Sidebar({ currentView, onViewChange, onCreateEvent }: SidebarProps) {
-  return (
-    <aside className="fixed left-0 top-0 h-full flex flex-col py-8 px-4 z-40 bg-[#131b2e] w-72 pt-24">
-      {/* User Info */}
-      <div className="mb-8 px-4">
-        <h2 className="text-lg font-black text-[#c0c1ff] font-headline">The Curator</h2>
-        <p className="text-xs text-slate-500 font-medium uppercase tracking-widest">Premium Plan</p>
-      </div>
+const NAV_ITEMS: Array<{ view: ViewMode; label: string; icon: string }> = [
+  { view: 'month', label: 'Ay', icon: 'calendar_month' },
+  { view: 'week', label: 'Hafta', icon: 'date_range' },
+  { view: 'day', label: 'Gün', icon: 'calendar_today' },
+];
 
-      {/* Create Event Button */}
+export const Sidebar: FC<SidebarProps> = ({ currentView, onViewChange, onCreateEvent }) => {
+  return (
+    <aside className="fixed left-0 top-20 h-[calc(100vh-5rem)] w-72 flex flex-col py-6 px-4 z-40 bg-[var(--color-surface-container-low)] border-r border-[var(--color-outline-variant)]/10">
       <button
         onClick={onCreateEvent}
-        className="mb-8 mx-2 bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-[#0d0096] py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-[#8083ff]/10 active:scale-95 transition-transform"
+        className="mb-6 mx-2 bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-[var(--color-on-primary)] py-3 rounded-lg font-semibold flex items-center justify-center gap-2 shadow-lg shadow-[var(--color-primary)]/10 hover:scale-[1.02] active:scale-95 transition-all duration-200"
       >
         <span className="material-symbols-outlined">add</span>
         Yeni Etkinlik
       </button>
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-2">
-        <button
-          onClick={() => onViewChange('month')}
-          className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-sm transition-colors ${
-            currentView === 'month'
-              ? 'bg-[#c0c1ff]/10 text-[#c0c1ff]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-          }`}
-        >
-          <span className="material-symbols-outlined">calendar_today</span>
-          Takvimlerim
-        </button>
-        <button
-          onClick={() => onViewChange('week')}
-          className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-sm transition-colors ${
-            currentView === 'week'
-              ? 'bg-[#c0c1ff]/10 text-[#c0c1ff]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-          }`}
-        >
-          <span className="material-symbols-outlined">view_week</span>
-          Haftalık Görünüm
-        </button>
-        <button
-          onClick={() => onViewChange('day')}
-          className={`w-full flex items-center gap-3 rounded-xl px-4 py-3 font-semibold text-sm transition-colors ${
-            currentView === 'day'
-              ? 'bg-[#c0c1ff]/10 text-[#c0c1ff]'
-              : 'text-slate-400 hover:text-slate-200 hover:bg-white/5'
-          }`}
-        >
-          <span className="material-symbols-outlined">view_day</span>
-          Günlük Görünüm
-        </button>
-        <button
-          className="w-full flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors text-sm"
-        >
-          <span className="material-symbols-outlined">group</span>
-          Paylaşılanlar
-        </button>
-        <button
-          className="w-full flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors text-sm"
-        >
-          <span className="material-symbols-outlined">check_circle</span>
-          Görevler
-        </button>
-        <button
-          className="w-full flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors text-sm"
-        >
-          <span className="material-symbols-outlined">archive</span>
-          Arşiv
-        </button>
+      <nav className="flex-1 space-y-1">
+        {NAV_ITEMS.map((item) => (
+          <button
+            key={item.view}
+            onClick={() => onViewChange(item.view)}
+            className={`
+              w-full flex items-center gap-3 px-4 py-3 rounded-lg font-medium transition-all duration-200
+              ${currentView === item.view 
+                ? 'bg-[var(--color-primary-container)]/20 text-[var(--color-primary)]' 
+                : 'text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)]'
+              }
+            `}
+          >
+            <span className="material-symbols-outlined">{item.icon}</span>
+            <span>{item.label}</span>
+          </button>
+        ))}
       </nav>
 
-      {/* Bottom Actions */}
-      <div className="mt-auto space-y-2">
-        <button className="w-full flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors text-sm">
-          <span className="material-symbols-outlined">help</span>
-          Yardım
+      <div className="mt-auto pt-6 space-y-1 border-t border-[var(--color-outline-variant)]/10">
+        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200">
+          <span className="material-symbols-outlined">notifications</span>
+          <span>Bildirimler</span>
         </button>
-        <button className="w-full flex items-center gap-3 text-slate-400 px-4 py-3 hover:text-slate-200 hover:bg-white/5 rounded-xl transition-colors text-sm">
-          <span className="material-symbols-outlined">logout</span>
-          Çıkış
+        <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200">
+          <span className="material-symbols-outlined">help</span>
+          <span>Yardım</span>
         </button>
       </div>
     </aside>
   );
-}
+};

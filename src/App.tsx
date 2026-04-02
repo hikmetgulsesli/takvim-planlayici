@@ -284,13 +284,4 @@ function AppContent() {
     </div>
   );
 }
-
-function App() {
-  return (
-    <EventProvider>
-      <CalendarPage />
-    </EventProvider>
-  )
-}
-
-export default App
+export default AppContent;

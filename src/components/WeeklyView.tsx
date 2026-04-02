@@ -1,281 +1,208 @@
-import { useState, useCallback, useMemo } from 'react';
-import type { DragEvent } from 'react';
-import type { CalendarEvent } from '../types';
+import { useMemo } from 'react'
+import { useEventContext } from '../contexts/EventContext'
+import type { Event } from '../types'
 
 interface WeeklyViewProps {
-  date: Date;
-  events: CalendarEvent[];
-  onEventClick: (event: CalendarEvent) => void;
-  onEventDrop: (eventId: string, newDate: string, newStartTime?: string) => void;
-  onTimeSlotClick: (date: string, time: string) => void;
-  onPreviousWeek: () => void;
-  onNextWeek: () => void;
-  onToday: () => void;
+  currentDate?: Date
+  onEventClick?: (event: Event) => void
+  onTimeSlotClick?: (date: string, time: string) => void
 }
 
-const HOURS = Array.from({ length: 24 }, (_, i) => i);
+const HOURS = Array.from({ length: 24 }, (_, i) => i)
+const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
 
-const COLOR_MAP: Record<string, { bg: string; border: string; text: string }> = {
-  '#c0c1ff': { bg: 'bg-[#c0c1ff]/10', border: 'border-[#c0c1ff]', text: 'text-[#c0c1ff]' },
-  '#ffb783': { bg: 'bg-[#ffb783]/10', border: 'border-[#ffb783]', text: 'text-[#ffb783]' },
-  '#ffb4ab': { bg: 'bg-[#ffb4ab]/10', border: 'border-[#ffb4ab]', text: 'text-[#ffb4ab]' },
-  '#8083ff': { bg: 'bg-[#8083ff]/10', border: 'border-[#8083ff]', text: 'text-[#8083ff]' },
-  '#31394d': { bg: 'bg-[#31394d]/50', border: 'border-[#31394d]', text: 'text-[#dae2fd]' },
-  '#d97721': { bg: 'bg-[#d97721]/10', border: 'border-[#d97721]', text: 'text-[#ffb783]' },
-  '#10b981': { bg: 'bg-emerald-400/10', border: 'border-emerald-400', text: 'text-emerald-400' },
-  '#14b8a6': { bg: 'bg-teal-300/10', border: 'border-teal-300', text: 'text-teal-300' },
-};
+function localDateString(date: Date): string {
+  const y = date.getFullYear()
+  const m = String(date.getMonth() + 1).padStart(2, '0')
+  const d = String(date.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
 
-const getColorClasses = (color: string): { bg: string; border: string; text: string } => {
-  return COLOR_MAP[color] ?? { bg: 'bg-[#c0c1ff]/10', border: 'border-[#c0c1ff]', text: 'text-[#c0c1ff]' };
-};
+function isSameDay(a: Date, b: Date): boolean {
+  return (
+    a.getDate() === b.getDate() &&
+    a.getMonth() === b.getMonth() &&
+    a.getFullYear() === b.getFullYear()
+  )
+}
 
-const formatHour = (hour: number): string => {
-  return `${hour.toString().padStart(2, '0')}:00`;
-};
+export function WeeklyView({ currentDate = new Date(), onEventClick, onTimeSlotClick }: WeeklyViewProps) {
+  const { getEventsByWeek } = useEventContext()
 
-const MONTHS = [
-  'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
-  'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
-];
+  const weekData = useMemo(() => {
+    const start = new Date(currentDate)
+    start.setHours(0, 0, 0, 0)
 
-const DAYS = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
+    // Adjust to Monday (Turkish week starts Monday)
+    const day = start.getDay()
+    const diff = start.getDate() - day + (day === 0 ? -6 : 1)
+    const monday = new Date(start)
+    monday.setDate(diff)
 
-const isToday = (date: Date): boolean => {
-  const today = new Date();
-  return date.getDate() === today.getDate() &&
-    date.getMonth() === today.getMonth() &&
-    date.getFullYear() === today.getFullYear();
-};
-
-const parseTimeToMinutes = (time: string): number => {
-  const parts = time.split(':');
-  const hours = parseInt(parts[0] ?? '0', 10);
-  const minutes = parseInt(parts[1] ?? '0', 10);
-  return hours * 60 + minutes;
-};
-
-const getEventPosition = (startTime: string, endTime: string): { top: number; height: number } => {
-  const startMinutes = parseTimeToMinutes(startTime);
-  const endMinutes = parseTimeToMinutes(endTime);
-  const top = (startMinutes / 1440) * 100;
-  const height = ((endMinutes - startMinutes) / 1440) * 100;
-  return { top, height };
-};
-
-export function WeeklyView({
-  date,
-  events,
-  onEventClick,
-  onEventDrop,
-  onTimeSlotClick,
-  onPreviousWeek,
-  onNextWeek,
-  onToday,
-}: WeeklyViewProps) {
-  const [draggedEventId, setDraggedEventId] = useState<string | null>(null);
-  const [dragOverSlot, setDragOverSlot] = useState<{ date: string; hour: number } | null>(null);
-
-  // Get the start of the week (Monday)
-  const getWeekStart = (d: Date): Date => {
-    const day = d.getDay();
-    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(d.setDate(diff));
-  };
-
-  const weekStart = getWeekStart(new Date(date));
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const d = new Date(weekStart);
-    d.setDate(d.getDate() + i);
-    return d;
-  });
-
-  const weekEnd = weekDays[6] ?? weekStart;
-  const isCurrentWeek = weekDays.some(day => isToday(day));
-
-  const getEventsForDate = useCallback((dateStr: string) => {
-    return events.filter((event) => event.date === dateStr);
-  }, [events]);
-
-  const handleDragStart = (e: DragEvent, eventId: string) => {
-    setDraggedEventId(eventId);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', eventId);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedEventId(null);
-    setDragOverSlot(null);
-  };
-
-  const handleDragOver = (e: DragEvent, dateStr: string, hour: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverSlot({ date: dateStr, hour });
-  };
-
-  const handleDragLeave = () => {
-    setDragOverSlot(null);
-  };
-
-  const handleDrop = (e: DragEvent, dateStr: string, hour: number) => {
-    e.preventDefault();
-    const eventId = e.dataTransfer.getData('text/plain');
-    if (eventId) {
-      const timeString = `${hour.toString().padStart(2, '0')}:00`;
-      onEventDrop(eventId, dateStr, timeString);
+    const weekDates: Date[] = []
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(monday)
+      date.setDate(monday.getDate() + i)
+      weekDates.push(date)
     }
-    setDraggedEventId(null);
-    setDragOverSlot(null);
-  };
 
-  const handleTimeSlotClick = (dateStr: string, hour: number) => {
-    const timeString = `${hour.toString().padStart(2, '0')}:00`;
-    onTimeSlotClick(dateStr, timeString);
-  };
+    const weekEvents = getEventsByWeek(monday)
+
+    // Check if current week contains today
+    const today = new Date()
+    const isCurrentWeek = weekDates.some(d => isSameDay(d, today))
+
+    return { weekDates, weekEvents, isCurrentWeek, today }
+  }, [currentDate, getEventsByWeek])
+
+  const { weekDates, weekEvents, isCurrentWeek, today } = weekData
+
+  // Calculate current time indicator position
+  const currentTimePosition = useMemo(() => {
+    if (!isCurrentWeek) return null
+    const now = new Date()
+    const currentDayIndex = weekDates.findIndex(d => isSameDay(d, now))
+    if (currentDayIndex === -1) return null
+
+    const minutesSinceMidnight = now.getHours() * 60 + now.getMinutes()
+    return { dayIndex: currentDayIndex, minutes: minutesSinceMidnight }
+  }, [isCurrentWeek, weekDates])
+
+  const getEventPosition = (event: Event) => {
+    const [startH, startM] = (event.startTime ?? '00:00').split(':').map(Number)
+    const [endH, endM] = (event.endTime ?? '00:00').split(':').map(Number)
+
+    const startMinutes = (startH ?? 0) * 60 + (startM ?? 0)
+    const endMinutesTotal = (endH ?? 0) * 60 + (endM ?? 0)
+    const duration = endMinutesTotal - startMinutes
+
+    const top = (startMinutes / 60) * 64 // 64px per hour
+    const height = (duration / 60) * 64
+
+    return { top, height }
+  }
+
+  const formatHour = (hour: number) => {
+    return `${String(hour).padStart(2, '0')}:00`
+  }
+
+  const handleTimeSlotClick = (date: Date, hour: number) => {
+    if (onTimeSlotClick) {
+      const dateStr = localDateString(date)
+      const timeStr = `${String(hour).padStart(2, '0')}:00`
+      onTimeSlotClick(dateStr, timeStr)
+    }
+  }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-surface-container-low rounded-2xl overflow-hidden border border-outline-variant/15">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 px-4">
-        <div>
-          <h2 className="font-headline text-3xl font-bold tracking-tight text-[#dae2fd]">
-            {weekStart.getDate()} {MONTHS[weekStart.getMonth()]} - {weekEnd.getDate()} {MONTHS[weekEnd.getMonth()]} {weekEnd.getFullYear()}
-          </h2>
-          {isCurrentWeek && (
-            <p className="text-[#c0c1ff] font-medium mt-1">Bu hafta</p>
-          )}
+      <div className="flex border-b border-outline-variant/15 bg-surface-container">
+        {/* Time column header */}
+        <div className="w-16 flex-shrink-0 border-r border-outline-variant/15 p-3 bg-surface-container-low">
+          <span className="text-xs font-label uppercase tracking-wider text-outline">Saat</span>
         </div>
-        <div className="flex items-center gap-3">
-          <button
-            onClick={onToday}
-            className="px-4 py-2 rounded-xl font-semibold text-[#c0c1ff] hover:bg-white/5 transition-all text-sm"
-          >
-            Bugün
-          </button>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={onPreviousWeek}
-              className="p-2 rounded-xl text-[#c0c1ff] hover:bg-white/5 transition-all"
-              aria-label="Önceki hafta"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button
-              onClick={onNextWeek}
-              className="p-2 rounded-xl text-[#c0c1ff] hover:bg-white/5 transition-all"
-              aria-label="Sonraki hafta"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
+        {/* Day headers */}
+        <div className="flex flex-1">
+          {weekDates.map((date, index) => {
+            const isToday = isSameDay(date, today)
+            return (
+              <div
+                key={index}
+                className={`flex-1 p-3 text-center border-r border-outline-variant/15 last:border-r-0 ${
+                  isToday ? 'bg-primary/5' : ''
+                }`}
+              >
+                <div className={`font-headline font-bold text-sm ${isToday ? 'text-primary' : 'text-on-surface'}`}>
+                  {DAYS[index]}
+                </div>
+                <div className={`text-xs mt-1 ${isToday ? 'text-primary' : 'text-outline'}`}>
+                  {date.getDate()}
+                </div>
+              </div>
+            )
+          })}
         </div>
       </div>
 
-      {/* Week Grid */}
-      <div className="flex-1 overflow-auto px-4 pb-8">
-        <div className="min-w-[800px]">
-          {/* Day Headers */}
-          <div className="grid grid-cols-8 border-b border-[#464554]/30">
-            <div className="p-3"></div> {/* Empty corner */}
-            {weekDays.map((day, index) => {
-              const isTodayDate = isToday(day);
-              return (
-                <div
-                  key={index}
-                  className={`
-                    p-3 text-center
-                    ${isTodayDate ? 'bg-[#c0c1ff]/10' : ''}
-                  `}
-                >
-                  <div className="text-sm text-[#908fa0]">{DAYS[index]}</div>
-                  <div className={`
-                    text-lg font-semibold
-                    ${isTodayDate ? 'text-[#c0c1ff]' : 'text-[#dae2fd]'}
-                  `}>
-                    {day.getDate()}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Time Grid */}
-          <div className="relative">
+      {/* Scrollable content */}
+      <div className="flex-1 overflow-auto">
+        <div className="flex min-w-[800px]">
+          {/* Time labels column */}
+          <div className="w-16 flex-shrink-0 bg-surface-container-low border-r border-outline-variant/15">
             {HOURS.map((hour) => (
-              <div key={hour} className="grid grid-cols-8 border-b border-[#464554]/10">
-                {/* Time Label */}
-                <div className="p-2 text-right text-xs text-[#908fa0]">
-                  {formatHour(hour)}
-                </div>
-                
-                {/* Day Columns */}
-                {weekDays.map((day, dayIndex) => {
-                  const dateStr = `${day.getFullYear()}-${(day.getMonth()+1).toString().padStart(2,'0')}-${day.getDate().toString().padStart(2,'0')}`;
-                  const isDragOver = dragOverSlot?.date === dateStr && dragOverSlot?.hour === hour;
-                  
-                  return (
-                    <div
-                      key={dayIndex}
-                      className={`
-                        relative h-16 border-l border-[#464554]/10
-                        ${isDragOver ? 'bg-[#c0c1ff]/20' : 'hover:bg-white/5'}
-                        transition-colors cursor-pointer
-                      `}
-                      onDragOver={(e) => handleDragOver(e, dateStr, hour)}
-                      onDragLeave={handleDragLeave}
-                      onDrop={(e) => handleDrop(e, dateStr, hour)}
-                      onClick={() => handleTimeSlotClick(dateStr, hour)}
-                    />
-                  );
-                })}
+              <div
+                key={hour}
+                className="h-16 border-b border-outline-variant/10 flex items-start justify-center pt-1"
+              >
+                <span className="text-xs text-outline font-medium">{formatHour(hour)}</span>
               </div>
             ))}
+          </div>
 
-            {/* Events Overlay */}
-            {weekDays.map((day, dayIndex) => {
-              const dateStr = `${day.getFullYear()}-${(day.getMonth()+1).toString().padStart(2,'0')}-${day.getDate().toString().padStart(2,'0')}`;
-              const dayEvents = getEventsForDate(dateStr);
-              
-              return dayEvents.map((event) => {
-                const { top, height } = getEventPosition(event.startTime, event.endTime);
-                const colorClasses = getColorClasses(event.color);
-                const isDragging = draggedEventId === event.id;
-                
-                return (
-                  <button
-                    key={event.id}
-                    draggable
-                    onDragStart={(e) => handleDragStart(e, event.id)}
-                    onDragEnd={handleDragEnd}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onEventClick(event);
-                    }}
-                    className={`
-                      absolute text-left rounded-lg p-2 overflow-hidden
-                      ${colorClasses.bg} border-l-2 ${colorClasses.border} ${colorClasses.text}
-                      hover:brightness-110 transition-all cursor-move
-                      ${isDragging ? 'opacity-50 shadow-lg scale-105' : ''}
-                    `}
-                    style={{
-                      left: `${(dayIndex + 1) * 12.5}%`,
-                      top: `${top}%`,
-                      width: '11.5%',
-                      height: `${Math.max(height, 3)}%`,
-                    }}
-                  >
-                    <div className="font-semibold text-xs truncate">{event.title}</div>
-                    <div className="text-xs opacity-80">
-                      {event.startTime} - {event.endTime}
+          {/* Days grid */}
+          <div className="flex flex-1 relative">
+            {weekDates.map((date, dayIndex) => {
+              const dateStr = localDateString(date)
+              const dayEvents = weekEvents.filter(e => e.date === dateStr)
+              const isToday = isSameDay(date, today)
+
+              return (
+                <div
+                  key={dayIndex}
+                  className={`flex-1 border-r border-outline-variant/15 last:border-r-0 relative ${
+                    isToday ? 'bg-primary/5' : ''
+                  }`}
+                >
+                  {/* Hour grid lines */}
+                  {HOURS.map((hour) => (
+                    <div
+                      key={hour}
+                      className="h-16 border-b border-outline-variant/10 cursor-pointer hover:bg-white/5 transition-colors"
+                      onClick={() => handleTimeSlotClick(date, hour)}
+                    />
+                  ))}
+
+                  {/* Events */}
+                  {dayEvents.map((event) => {
+                    const { top, height } = getEventPosition(event)
+                    return (
+                      <div
+                        key={event.id}
+                        className="absolute left-1 right-1 rounded-lg p-2 cursor-pointer hover:brightness-110 transition-all hover:scale-[1.02] overflow-hidden"
+                        style={{
+                          top: `${top}px`,
+                          height: `${Math.max(height, 32)}px`,
+                          backgroundColor: `${event.color}20`,
+                          borderLeft: `3px solid ${event.color}`
+                        }}
+                        onClick={() => onEventClick?.(event)}
+                      >
+                        <div className="text-xs font-semibold text-on-surface truncate">
+                          {event.title}
+                        </div>
+                        <div className="text-[10px] text-on-surface-variant">
+                          {event.startTime} - {event.endTime}
+                        </div>
+                      </div>
+                    )
+                  })}
+
+                  {/* Current time indicator */}
+                  {currentTimePosition && currentTimePosition.dayIndex === dayIndex && (
+                    <div
+                      className="absolute left-0 right-0 border-t-2 border-error z-10 pointer-events-none"
+                      style={{ top: `${(currentTimePosition.minutes / 60) * 64}px` }}
+                    >
+                      <div className="absolute -left-1 -top-1.5 w-3 h-3 rounded-full bg-error" />
                     </div>
-                  </button>
-                );
-              });
+                  )}
+                </div>
+              )
             })}
           </div>
         </div>
       </div>
     </div>
-  );
+  )
 }

@@ -1,13 +1,11 @@
-import { useState } from 'react';
-import type { CalendarEvent } from '../types';
-import type { DragEvent } from 'react';
+import type { FC } from 'react';
+import type { CalendarEvent } from '../types/index';
 
 interface DailyViewProps {
   date: Date;
   events: CalendarEvent[];
   onEventClick: (event: CalendarEvent) => void;
   onTimeSlotClick: (date: string, time: string) => void;
-  onEventDrop?: (eventId: string, newDate: string, newStartTime?: string) => void;
   onPreviousDay: () => void;
   onNextDay: () => void;
   onToday: () => void;
@@ -50,7 +48,7 @@ const formatTurkishDate = (date: Date): string => {
 };
 
 const formatShortDate = (date: Date): string => {
-  return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
+  return date.toISOString().split('T')[0] ?? '';
 };
 
 const isToday = (date: Date): boolean => {
@@ -65,192 +63,137 @@ const getCurrentTimePosition = (): number => {
   return now.getHours() * 60 + now.getMinutes();
 };
 
-const parseTimeToMinutes = (time: string): number => {
-  const parts = time.split(':');
-  const hours = parseInt(parts[0] ?? '0', 10);
-  const minutes = parseInt(parts[1] ?? '0', 10);
-  return hours * 60 + minutes;
-};
-
-const getEventPosition = (startTime: string, endTime: string): { top: number; height: number } => {
-  const startMinutes = parseTimeToMinutes(startTime);
-  const endMinutes = parseTimeToMinutes(endTime);
-  const top = (startMinutes / 1440) * 100;
-  const height = ((endMinutes - startMinutes) / 1440) * 100;
-  return { top, height };
-};
-
-export function DailyView({
+export const DailyView: FC<DailyViewProps> = ({
   date,
   events,
   onEventClick,
   onTimeSlotClick,
-  onEventDrop,
   onPreviousDay,
   onNextDay,
   onToday,
-}: DailyViewProps) {
-  const [draggedEventId, setDraggedEventId] = useState<string | null>(null);
-  const [dragOverHour, setDragOverHour] = useState<number | null>(null);
-
-  const currentTimePosition = isToday(date) ? getCurrentTimePosition() : null;
-  const currentTimePercent = currentTimePosition ? (currentTimePosition / 1440) * 100 : null;
-
-  const handleTimeSlotClick = (hour: number) => {
-    const timeString = `${hour.toString().padStart(2, '0')}:00`;
-    onTimeSlotClick(formatShortDate(date), timeString);
-  };
-
-  const handleDragStart = (e: DragEvent, eventId: string) => {
-    setDraggedEventId(eventId);
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', eventId);
-  };
-
-  const handleDragEnd = () => {
-    setDraggedEventId(null);
-    setDragOverHour(null);
-  };
-
-  const handleDragOver = (e: DragEvent, hour: number) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'move';
-    setDragOverHour(hour);
-  };
-
-  const handleDragLeave = () => {
-    setDragOverHour(null);
-  };
-
-  const handleDrop = (e: DragEvent, hour: number) => {
-    e.preventDefault();
-    const eventId = e.dataTransfer.getData('text/plain');
-    if (eventId && onEventDrop) {
-      const timeString = `${hour.toString().padStart(2, '0')}:00`;
-      onEventDrop(eventId, formatShortDate(date), timeString);
-    }
-    setDraggedEventId(null);
-    setDragOverHour(null);
-  };
+}) => {
+  const dateStr = formatShortDate(date);
+  const today = isToday(date);
+  const currentTimePosition = today ? getCurrentTimePosition() : null;
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="animate-fade-in">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6 px-4">
-        <div>
-          <h2 className="font-headline text-3xl font-bold tracking-tight text-[#dae2fd]">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-4">
+          <h2 className="text-2xl font-headline font-bold text-[var(--color-on-surface)]">
             {formatTurkishDate(date)}
           </h2>
-          {isToday(date) && (
-            <p className="text-[#c0c1ff] font-medium mt-1">Bugün</p>
+          {today && (
+            <span className="px-3 py-1 rounded-full bg-[var(--color-primary-container)]/20 text-[var(--color-primary)] text-sm font-medium">
+              Bugün
+            </span>
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onPreviousDay}
+            className="p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200"
+            aria-label="Önceki gün"
+          >
+            <span className="material-symbols-outlined">chevron_left</span>
+          </button>
           <button
             onClick={onToday}
-            className="px-4 py-2 rounded-xl font-semibold text-[#c0c1ff] hover:bg-white/5 transition-all text-sm"
+            className="px-4 py-2 rounded-lg text-[var(--color-on-surface)] bg-[var(--color-surface-container)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200 font-medium"
           >
             Bugün
           </button>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={onPreviousDay}
-              className="p-2 rounded-xl text-[#c0c1ff] hover:bg-white/5 transition-all"
-              aria-label="Önceki gün"
-            >
-              <span className="material-symbols-outlined">chevron_left</span>
-            </button>
-            <button
-              onClick={onNextDay}
-              className="p-2 rounded-xl text-[#c0c1ff] hover:bg-white/5 transition-all"
-              aria-label="Sonraki gün"
-            >
-              <span className="material-symbols-outlined">chevron_right</span>
-            </button>
-          </div>
+          <button
+            onClick={onNextDay}
+            className="p-2 rounded-lg text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200"
+            aria-label="Sonraki gün"
+          >
+            <span className="material-symbols-outlined">chevron_right</span>
+          </button>
         </div>
       </div>
 
-      {/* Daily Grid */}
-      <div className="flex-1 overflow-y-auto px-4 pb-8">
-        <div className="relative min-h-[1440px]">
-          {/* Time Grid */}
-          {HOURS.map((hour) => (
-            <div
-              key={hour}
-              className="absolute w-full flex"
-              style={{ top: `${(hour / 24) * 100}%`, height: `${100 / 24}%` }}
-            >
-              {/* Time Label */}
-              <div className="w-16 flex-shrink-0 text-right pr-4">
-                <span className="text-xs text-[#908fa0] font-medium">
-                  {formatHour(hour)}
-                </span>
-              </div>
-              
-              {/* Hour Cell */}
-              <button
-                onClick={() => handleTimeSlotClick(hour)}
-                onDragOver={(e) => handleDragOver(e, hour)}
-                onDragLeave={handleDragLeave}
-                onDrop={(e) => handleDrop(e, hour)}
-                className={`
-                  flex-1 border-t border-[#464554]/30 transition-colors cursor-pointer text-left
-                  ${dragOverHour === hour ? 'bg-[#c0c1ff]/20' : 'hover:bg-white/5'}
-                `}
-                aria-label={`${formatHour(hour)} - Etkinlik ekle`}
-              />
+      {/* Empty state for no events */}
+      {events.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-16 px-8 text-center">
+          <div className="relative mb-8">
+            <div className="absolute inset-0 blur-[60px] bg-[var(--color-primary)]/10 rounded-full scale-150"></div>
+            <div className="relative w-32 h-32 flex items-center justify-center rounded-full border border-[var(--color-primary)]/20 glass-morphism">
+              <span className="material-symbols-outlined text-6xl text-[var(--color-primary)]" style={{ textShadow: '0 0 15px rgba(168, 232, 255, 0.4)' }}>
+                calendar_today
+              </span>
             </div>
-          ))}
+          </div>
+          <h3 className="font-headline text-2xl font-bold text-[var(--color-on-surface)] mb-3">
+            Henüz etkinlik yok
+          </h3>
+          <p className="text-[var(--color-on-surface-variant)] max-w-sm mb-8 leading-relaxed">
+            Henüz etkinlik eklemediniz. Yeni etkinlik eklemek için + butonuna tıklayın.
+          </p>
+        </div>
+      )}
 
-          {/* Current Time Indicator */}
-          {currentTimePercent !== null && (
+      {/* Time grid */}
+      {events.length > 0 && (
+        <div className="relative">
+          {/* Current time indicator */}
+          {currentTimePosition !== null && (
             <div
-              className="absolute left-16 right-0 flex items-center pointer-events-none z-10"
-              style={{ top: `${currentTimePercent}%` }}
+              className="absolute left-0 right-0 z-20 flex items-center pointer-events-none"
+              style={{ top: `${(currentTimePosition / 1440) * 100}%` }}
             >
-              <div className="w-2 h-2 rounded-full bg-[#ffb783] -ml-1" />
-              <div className="flex-1 h-px bg-[#ffb783]/50" />
+              <div className="w-3 h-3 rounded-full bg-[var(--color-error)] -ml-1.5"></div>
+              <div className="flex-1 h-0.5 bg-[var(--color-error)]"></div>
             </div>
           )}
 
-          {/* Events */}
-          {events.map((event) => {
-            const { top, height } = getEventPosition(event.startTime, event.endTime);
-            const colorClasses = getColorClasses(event.color);
-            const isDragging = draggedEventId === event.id;
-            
-            return (
-              <button
-                key={event.id}
-                draggable
-                onDragStart={(e) => handleDragStart(e, event.id)}
-                onDragEnd={handleDragEnd}
-                onClick={() => onEventClick(event)}
-                className={`
-                  absolute left-16 right-4 ${colorClasses.bg} border-l-2 ${colorClasses.border} ${colorClasses.text} 
-                  rounded-lg p-3 text-left hover:brightness-110 transition-all cursor-move overflow-hidden
-                  ${isDragging ? 'opacity-50 shadow-lg scale-[1.02]' : ''}
-                `}
-                style={{
-                  top: `${top}%`,
-                  height: `${Math.max(height, 4)}%`,
-                }}
-              >
-                <div className="font-semibold text-sm truncate">{event.title}</div>
-                <div className="text-xs opacity-80 mt-0.5">
-                  {event.startTime} - {event.endTime}
-                </div>
-                {height > 6 && event.description && (
-                  <div className="text-xs opacity-70 mt-1 line-clamp-2">
-                    {event.description}
+          <div className="space-y-0">
+            {HOURS.map((hour) => {
+              const hourEvents = events.filter((e) => {
+                const startHour = parseInt(e.startTime.split(':')[0] ?? '0', 10);
+                return startHour === hour;
+              });
+
+              return (
+                <div
+                  key={hour}
+                  className="flex min-h-[80px] border-b border-[var(--color-outline-variant)]/20 hover:bg-[var(--color-surface-container)]/30 transition-colors cursor-pointer"
+                  onClick={() => onTimeSlotClick(dateStr, formatHour(hour))}
+                >
+                  <div className="w-16 py-3 text-sm text-[var(--color-on-surface-variant)] font-medium">
+                    {formatHour(hour)}
                   </div>
-                )}
-              </button>
-            );
-          })}
+                  <div className="flex-1 py-1 px-2 relative">
+                    {hourEvents.map((event) => {
+                      const colorClasses = getColorClasses(event.color);
+                      return (
+                        <button
+                          key={event.id}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onEventClick(event);
+                          }}
+                          className={`
+                            w-full text-left rounded-md p-2 mb-1
+                            ${colorClasses.bg} border-l-2 ${colorClasses.border} ${colorClasses.text}
+                            hover:brightness-110 transition-all duration-200
+                          `}
+                        >
+                          <div className="font-semibold text-sm truncate">{event.title}</div>
+                          <div className="text-xs opacity-80">
+                            {event.startTime} - {event.endTime}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
-}
+};

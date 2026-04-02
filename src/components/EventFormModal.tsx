@@ -1,5 +1,6 @@
-import React, { useState, useCallback } from 'react';
-import type { EventFormData, CalendarEvent } from '../types';
+import React, { useState, useCallback, useEffect } from 'react';
+import type { EventFormData, CalendarEvent } from '../types/index';
+import { showToast } from './common/Toast';
 
 interface EventFormModalProps {
   isOpen: boolean;
@@ -52,6 +53,28 @@ export function EventFormModal({
   const [errors, setErrors] = useState<Partial<Record<keyof EventFormData, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof EventFormData, boolean>>>({});
 
+  // Reset form when modal opens - use a ref to track previous isOpen state
+  const wasOpenRef = React.useRef(false);
+  useEffect(() => {
+    if (isOpen && !wasOpenRef.current) {
+      // Modal just opened - reset form in a microtask to avoid sync setState
+      Promise.resolve().then(() => {
+        setFormData({
+          title: initialData?.title ?? '',
+          date: initialData?.date ?? getTodayString(),
+          startTime: initialData?.startTime ?? '09:00',
+          endTime: initialData?.endTime ?? '10:00',
+          description: initialData?.description ?? '',
+          color: initialData?.color ?? COLOR_OPTIONS[0]?.value ?? '#c0c1ff',
+          reminder: initialData?.reminder ?? 'none',
+        });
+        setErrors({});
+        setTouched({});
+      });
+    }
+    wasOpenRef.current = isOpen;
+  }, [isOpen, initialData]);
+
   const validate = useCallback((): boolean => {
     const newErrors: Partial<Record<keyof EventFormData, string>> = {};
     
@@ -93,6 +116,8 @@ export function EventFormModal({
 
   const handleSubmit = useCallback((e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Mark all fields as touched
     setTouched({
       title: true,
       date: true,
@@ -102,66 +127,38 @@ export function EventFormModal({
     
     if (validate()) {
       onSubmit(formData);
-      setFormData({
-        title: '',
-        date: getTodayString(),
-        startTime: '09:00',
-        endTime: '10:00',
-        description: '',
-        color: COLOR_OPTIONS[0]?.value ?? '#c0c1ff',
-        reminder: 'none',
-      });
-      setErrors({});
-      setTouched({});
+      showToast(
+        editingEvent ? 'Etkinlik güncellendi' : 'Etkinlik oluşturuldu',
+        'success'
+      );
+    } else {
+      showToast('Lütfen gerekli alanları doldurun', 'error');
     }
-  }, [formData, onSubmit, validate]);
-
-  const handleCancel = useCallback(() => {
-    onClose();
-    setFormData({
-      title: initialData?.title ?? '',
-      date: initialData?.date ?? getTodayString(),
-      startTime: initialData?.startTime ?? '09:00',
-      endTime: initialData?.endTime ?? '10:00',
-      description: initialData?.description ?? '',
-      color: initialData?.color ?? COLOR_OPTIONS[0]?.value ?? '#c0c1ff',
-      reminder: initialData?.reminder ?? 'none',
-    });
-    setErrors({});
-    setTouched({});
-  }, [onClose, initialData]);
+  }, [formData, validate, onSubmit, editingEvent]);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[#060e20]/80 backdrop-blur-sm">
-      <div className="w-full max-w-xl glass-morphism rounded-[2rem] shadow-[0_32px_64px_rgba(128,131,255,0.12)] border border-[#464554]/15 p-10 relative max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-[var(--color-surface)]/80 backdrop-blur-sm animate-fade-in">
+      <div className="w-full max-w-lg glass-morphism rounded-lg shadow-[0_32px_64px_rgba(128,131,255,0.12)] border border-[var(--color-outline-variant)]/20 p-8 relative max-h-[90vh] overflow-y-auto">
         {/* Close Button */}
-        <div className="absolute top-6 right-6">
-          <button
-            onClick={handleCancel}
-            className="text-[#908fa0] hover:text-[#dae2fd] transition-colors"
-            aria-label="Kapat"
-          >
-            <span className="material-symbols-outlined">close</span>
-          </button>
-        </div>
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 text-[var(--color-on-surface-variant)] hover:text-[var(--color-on-surface)] transition-colors duration-200"
+          aria-label="Kapat"
+        >
+          <span className="material-symbols-outlined">close</span>
+        </button>
 
         {/* Header */}
-        <header className="mb-8">
-          <h2 className="font-headline text-3xl font-bold tracking-tight text-[#dae2fd]">
-            {editingEvent ? 'Etkinliği Düzenle' : 'Yeni Etkinlik Oluştur'}
-          </h2>
-          <p className="text-[#c7c4d7] font-medium mt-1">
-            Takviminize yeni bir editoryal an ekleyin.
-          </p>
-        </header>
+        <h2 className="font-headline text-2xl font-bold text-[var(--color-on-surface)] mb-6">
+          {editingEvent ? 'Etkinliği Düzenle' : 'Yeni Etkinlik'}
+        </h2>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           {/* Title */}
           <div>
-            <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
               Başlık
             </label>
             <input
@@ -170,95 +167,91 @@ export function EventFormModal({
               onChange={(e) => handleChange('title', e.target.value)}
               onBlur={() => handleBlur('title')}
               placeholder="Etkinlik başlığı..."
-              className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] placeholder:text-[#908fa0]/50 focus:ring-2 focus:ring-[#c0c1ff] transition-all"
+              className={`
+                w-full bg-[var(--color-surface-container-high)] border rounded-lg px-4 py-3
+                text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)]/50
+                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                transition-all duration-200 outline-none
+                ${errors.title && touched.title ? 'border-[var(--color-error)]' : 'border-transparent'}
+              `}
             />
             {errors.title && touched.title && (
-              <p className="text-[#ffb4ab] text-xs mt-1">{errors.title}</p>
+              <p className="mt-1 text-sm text-[var(--color-error)]">{errors.title}</p>
             )}
           </div>
 
-          {/* Date and Time */}
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
-                Tarih
-              </label>
-              <div className="relative">
-                <input
-                  type="date"
-                  value={formData.date}
-                  onChange={(e) => handleChange('date', e.target.value)}
-                  onBlur={() => handleBlur('date')}
-                  className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] focus:ring-2 focus:ring-[#c0c1ff] appearance-none"
-                />
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#908fa0] pointer-events-none">
-                  calendar_month
-                </span>
-              </div>
-              {errors.date && touched.date && (
-                <p className="text-[#ffb4ab] text-xs mt-1">{errors.date}</p>
-              )}
-            </div>
-            <div className="grid grid-cols-2 gap-2">
-              <div>
-                <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
-                  Başlangıç
-                </label>
-                <input
-                  type="time"
-                  value={formData.startTime}
-                  onChange={(e) => handleChange('startTime', e.target.value)}
-                  onBlur={() => handleBlur('startTime')}
-                  className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] focus:ring-2 focus:ring-[#c0c1ff]"
-                />
-                {errors.startTime && touched.startTime && (
-                  <p className="text-[#ffb4ab] text-xs mt-1">{errors.startTime}</p>
-                )}
-              </div>
-              <div>
-                <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
-                  Bitiş
-                </label>
-                <input
-                  type="time"
-                  value={formData.endTime}
-                  onChange={(e) => handleChange('endTime', e.target.value)}
-                  onBlur={() => handleBlur('endTime')}
-                  className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] focus:ring-2 focus:ring-[#c0c1ff]"
-                />
-                {errors.endTime && touched.endTime && (
-                  <p className="text-[#ffb4ab] text-xs mt-1">{errors.endTime}</p>
-                )}
-              </div>
-            </div>
+          {/* Date */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
+              Tarih
+            </label>
+            <input
+              type="date"
+              value={formData.date}
+              onChange={(e) => handleChange('date', e.target.value)}
+              onBlur={() => handleBlur('date')}
+              className={`
+                w-full bg-[var(--color-surface-container-high)] border rounded-lg px-4 py-3
+                text-[var(--color-on-surface)]
+                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                transition-all duration-200 outline-none
+                ${errors.date && touched.date ? 'border-[var(--color-error)]' : 'border-transparent'}
+              `}
+            />
+            {errors.date && touched.date && (
+              <p className="mt-1 text-sm text-[var(--color-error)]">{errors.date}</p>
+            )}
           </div>
 
-          {/* Color Palette */}
-          <div>
-            <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-3">
-              Renk Paleti
-            </label>
-            <div className="flex flex-wrap gap-3">
-              {COLOR_OPTIONS.map((color) => (
-                <button
-                  key={color.value}
-                  type="button"
-                  onClick={() => handleChange('color', color.value)}
-                  className={`w-8 h-8 rounded-full transition-all ${
-                    formData.color === color.value
-                      ? 'ring-2 ring-offset-4 ring-offset-[#222a3d] ring-[#c0c1ff] scale-110'
-                      : 'hover:scale-110'
-                  }`}
-                  style={{ backgroundColor: color.value }}
-                  aria-label={color.label}
-                />
-              ))}
+          {/* Time range */}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
+                Başlangıç Saati
+              </label>
+              <input
+                type="time"
+                value={formData.startTime}
+                onChange={(e) => handleChange('startTime', e.target.value)}
+                onBlur={() => handleBlur('startTime')}
+                className={`
+                  w-full bg-[var(--color-surface-container-high)] border rounded-lg px-4 py-3
+                  text-[var(--color-on-surface)]
+                  focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                  transition-all duration-200 outline-none
+                  ${errors.startTime && touched.startTime ? 'border-[var(--color-error)]' : 'border-transparent'}
+                `}
+              />
+              {errors.startTime && touched.startTime && (
+                <p className="mt-1 text-sm text-[var(--color-error)]">{errors.startTime}</p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
+                Bitiş Saati
+              </label>
+              <input
+                type="time"
+                value={formData.endTime}
+                onChange={(e) => handleChange('endTime', e.target.value)}
+                onBlur={() => handleBlur('endTime')}
+                className={`
+                  w-full bg-[var(--color-surface-container-high)] border rounded-lg px-4 py-3
+                  text-[var(--color-on-surface)]
+                  focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                  transition-all duration-200 outline-none
+                  ${errors.endTime && touched.endTime ? 'border-[var(--color-error)]' : 'border-transparent'}
+                `}
+              />
+              {errors.endTime && touched.endTime && (
+                <p className="mt-1 text-sm text-[var(--color-error)]">{errors.endTime}</p>
+              )}
             </div>
           </div>
 
           {/* Description */}
           <div>
-            <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
               Açıklama
             </label>
             <textarea
@@ -266,45 +259,74 @@ export function EventFormModal({
               onChange={(e) => handleChange('description', e.target.value)}
               placeholder="Detaylar buraya..."
               rows={3}
-              className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] placeholder:text-[#908fa0]/50 focus:ring-2 focus:ring-[#c0c1ff] transition-all resize-none"
+              className="
+                w-full bg-[var(--color-surface-container-high)] border border-transparent rounded-lg px-4 py-3
+                text-[var(--color-on-surface)] placeholder:text-[var(--color-on-surface-variant)]/50
+                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                transition-all duration-200 outline-none resize-none
+              "
             />
+          </div>
+
+          {/* Color */}
+          <div>
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
+              Renk
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {COLOR_OPTIONS.map((color) => (
+                <button
+                  key={color.value}
+                  type="button"
+                  onClick={() => handleChange('color', color.value)}
+                  className={`
+                    w-10 h-10 rounded-lg transition-all duration-200
+                    ${formData.color === color.value ? 'ring-2 ring-[var(--color-on-surface)] scale-110' : 'hover:scale-105'}
+                  `}
+                  style={{ backgroundColor: color.value }}
+                  title={color.label}
+                  aria-label={color.label}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Reminder */}
           <div>
-            <label className="block font-label text-[0.6875rem] uppercase tracking-[0.05em] text-[#908fa0] mb-2">
-              Hatırlatıcı Tipi
+            <label className="block text-sm font-medium text-[var(--color-on-surface-variant)] mb-2">
+              Hatırlatıcı
             </label>
-            <div className="relative">
-              <select
-                value={formData.reminder}
-                onChange={(e) => handleChange('reminder', e.target.value)}
-                className="w-full bg-[#2d3449] border-none rounded-xl px-4 py-3 text-[#dae2fd] focus:ring-2 focus:ring-[#c0c1ff] appearance-none pr-10"
-              >
-                {REMINDER_OPTIONS.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-[#908fa0] pointer-events-none">
-                notifications
-              </span>
-            </div>
+            <select
+              value={formData.reminder}
+              onChange={(e) => handleChange('reminder', e.target.value)}
+              className="
+                w-full bg-[var(--color-surface-container-high)] border border-transparent rounded-lg px-4 py-3
+                text-[var(--color-on-surface)]
+                focus:ring-2 focus:ring-[var(--color-primary)] focus:border-transparent
+                transition-all duration-200 outline-none appearance-none
+                bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22%23e5e1e4%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C%2Fpolyline%3E%3C%2Fsvg%3E')] bg-no-repeat bg-[right_1rem_center]
+              "
+            >
+              {REMINDER_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
 
           {/* Actions */}
-          <div className="flex gap-4 pt-4">
+          <div className="flex gap-3 pt-4">
             <button
               type="button"
-              onClick={handleCancel}
-              className="flex-1 px-6 py-4 rounded-xl font-bold text-[#c0c1ff] hover:bg-white/5 transition-all text-sm"
+              onClick={onClose}
+              className="flex-1 px-6 py-4 rounded-lg font-bold text-[var(--color-primary)] hover:bg-[var(--color-surface-container-high)] transition-all duration-200 text-sm"
             >
               Vazgeç
             </button>
             <button
               type="submit"
-              className="flex-[2] bg-gradient-to-br from-[#c0c1ff] to-[#8083ff] text-[#0d0096] px-6 py-4 rounded-xl font-bold shadow-xl shadow-[#8083ff]/20 hover:scale-[1.02] active:scale-95 transition-all text-sm"
+              className="flex-[2] bg-gradient-to-br from-[var(--color-primary)] to-[var(--color-primary-container)] text-[var(--color-on-primary)] px-6 py-4 rounded-lg font-bold shadow-xl shadow-[var(--color-primary)]/20 hover:scale-[1.02] active:scale-95 transition-all duration-200 text-sm"
             >
               {editingEvent ? 'Güncelle' : 'Kaydet'}
             </button>

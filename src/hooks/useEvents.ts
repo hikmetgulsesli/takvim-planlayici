@@ -16,8 +16,8 @@ export function useEvents() {
   const saveEvents = useCallback((events: Event[]) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
-    } catch {
-      // Storage error
+    } catch (error) {
+      console.error('Failed to save events to localStorage:', error);
     }
   }, []);
 
@@ -29,9 +29,11 @@ export function useEvents() {
 
   const importEvents = useCallback((newEvents: Event[]): number => {
     const existing = getEvents();
-    const merged = [...existing, ...newEvents];
+    const existingIds = new Set(existing.map(e => e.id));
+    const uniqueNewEvents = newEvents.filter(e => !existingIds.has(e.id));
+    const merged = [...existing, ...uniqueNewEvents];
     saveEvents(merged);
-    return newEvents.length;
+    return uniqueNewEvents.length;
   }, [getEvents, saveEvents]);
 
   const exportEvents = useCallback((): string => {

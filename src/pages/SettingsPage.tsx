@@ -70,13 +70,10 @@ export function SettingsPage() {
       };
 
       const validEvents: Event[] = [];
-      const invalidItems: unknown[] = [];
 
       for (const item of parsed) {
         if (isValidEvent(item)) {
           validEvents.push(item);
-        } else {
-          invalidItems.push(item);
         }
       }
 

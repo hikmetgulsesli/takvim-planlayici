@@ -1,5 +1,5 @@
 import type { FC } from 'react';
-import type { CalendarEvent } from '../types';
+import type { CalendarEvent } from '../types/index';
 
 interface MonthlyViewProps {
   date: Date;

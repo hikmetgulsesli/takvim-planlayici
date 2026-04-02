@@ -288,9 +288,9 @@ function AppContent() {
 function App() {
   return (
     <EventProvider>
-      <AppContent />
+      <CalendarPage />
     </EventProvider>
-  );
+  )
 }
 
 export default App

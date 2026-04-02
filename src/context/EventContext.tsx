@@ -32,7 +32,12 @@ export function EventProvider({ children }: { children: React.ReactNode }) {
 
   // Persist events to localStorage
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(events));
+    } catch {
+      // Ignore storage errors to keep the UI responsive
+    }
   }, [events]);
 
   const invalidateNotifications = useCallback((eventId: string) => {

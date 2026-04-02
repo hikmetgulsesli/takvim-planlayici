@@ -8,6 +8,7 @@ import { WeeklyView } from './components/WeeklyView';
 import { EventFormModal } from './components/EventFormModal';
 import { EventDetailModal } from './components/EventDetailModal';
 import type { ViewMode, CalendarEvent, EventFormData } from './types';
+import { formatShortDate } from './types';
 import './index.css';
 
 function AppContent() {
@@ -115,8 +116,13 @@ function AppContent() {
       const newHours = parseInt(newTimeParts[0] ?? '0');
       const newMinutes = parseInt(newTimeParts[1] ?? '0');
       const newEndMinutes = newHours * 60 + newMinutes + duration;
-      const newEndHours = Math.floor(newEndMinutes / 60);
+      let newEndHours = Math.floor(newEndMinutes / 60);
       const newEndMins = newEndMinutes % 60;
+      
+      // Clamp to 23:59 if crossing midnight
+      if (newEndHours >= 24) {
+        newEndHours = 23;
+      }
       
       updates.startTime = newStartTime;
       updates.endTime = `${newEndHours.toString().padStart(2, '0')}:${newEndMins.toString().padStart(2, '0')}`;
@@ -128,8 +134,13 @@ function AppContent() {
   const handleTimeSlotClick = useCallback((date: string, time: string) => {
     const [hoursStr] = time.split(':');
     const hours = parseInt(hoursStr ?? '0', 10);
-    const endHour = hours === 23 ? 23 : hours + 1;
-    const endTime = `${endHour.toString().padStart(2, '0')}:00`;
+    let endTime: string;
+    if (hours === 23) {
+      endTime = '23:59';
+    } else {
+      const endHour = hours + 1;
+      endTime = `${endHour.toString().padStart(2, '0')}:00`;
+    }
     
     setFormInitialData({
       date,
@@ -188,36 +199,23 @@ function AppContent() {
     setEndDate('');
   }, []);
 
-  const currentDateStr = currentDate.toISOString().split('T')[0] ?? '';
+  const currentDateStr = formatShortDate(currentDate);
   const todaysEvents = getEventsByDate(currentDateStr);
 
   // Get filtered events for daily view (apply date range filter)
   const filteredTodaysEvents = useMemo(() => {
-    const trimmedSearch = searchQuery.trim().toLowerCase();
-
-    // If no filters are active, return all events for today
-    if (!trimmedSearch && !startDate && !endDate) {
+    if (!searchQuery.trim() && !startDate && !endDate) {
       return todaysEvents;
     }
-
-    // Apply date range filter to the current day so day view
-    // respects the same AND logic as week/month views.
-    const currentDateStr = currentDate.toISOString().split('T')[0]?.split('T')[0] ?? '';
-    const isDayWithinRange =
-      (!startDate || currentDateStr >= startDate) &&
-      (!endDate || currentDateStr <= endDate);
-
-    if (!isDayWithinRange) {
-      return [];
-    }
-
     return todaysEvents.filter((event) => {
-      const matchesSearch =
-        !trimmedSearch ||
-        event.title.toLowerCase().includes(trimmedSearch);
-      return matchesSearch;
+      const matchesSearch = searchQuery.trim() === '' || 
+        event.title.toLowerCase().includes(searchQuery.toLowerCase());
+      let matchesDateRange = true;
+      if (startDate && event.date < startDate) matchesDateRange = false;
+      if (endDate && event.date > endDate) matchesDateRange = false;
+      return matchesSearch && matchesDateRange;
     });
-  }, [todaysEvents, searchQuery, startDate, endDate, currentDate]);
+  }, [todaysEvents, searchQuery, startDate, endDate]);
 
   return (
     <div className="min-h-screen bg-[#0b1326]">
@@ -312,7 +310,7 @@ function AppContent() {
       </main>
 
       <EventFormModal
-        key={isFormOpen ? (selectedEvent?.id ?? 'new') : 'closed'}
+        key={isFormOpen ? (selectedEvent?.id || 'new') : 'closed'}
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
         onSubmit={handleFormSubmit}

@@ -1,5 +1,6 @@
-import { useState, type DragEvent } from 'react';
+import { useState } from 'react';
 import type { CalendarEvent } from '../types';
+import type { DragEvent } from 'react';
 
 interface DailyViewProps {
   date: Date;
@@ -49,10 +50,7 @@ const formatTurkishDate = (date: Date): string => {
 };
 
 const formatShortDate = (date: Date): string => {
-  const y = date.getFullYear();
-  const m = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${y}-${m}-${day}`;
+  return `${date.getFullYear()}-${(date.getMonth()+1).toString().padStart(2,'0')}-${date.getDate().toString().padStart(2,'0')}`;
 };
 
 const isToday = (date: Date): boolean => {

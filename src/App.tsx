@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import { EventProvider, useEvents } from './context/EventContext';
+import { useEvents } from './context/EventContext';
 import { Navbar } from './components/Navbar';
 import { Sidebar } from './components/Sidebar';
 import { DailyView } from './components/DailyView';

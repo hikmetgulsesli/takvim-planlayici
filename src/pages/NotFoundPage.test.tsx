@@ -12,7 +12,7 @@ describe('NotFoundPage', () => {
     );
 
     expect(screen.getByText('404')).toBeInTheDocument();
-    expect(screen.getByText('Aradığınız sayfa bulunamadı')).toBeInTheDocument();
+    expect(screen.getByText('Sayfa bulunamadı')).toBeInTheDocument();
   });
 
   it('has link back to calendar', () => {
